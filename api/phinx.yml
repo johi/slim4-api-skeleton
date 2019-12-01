@@ -1,0 +1,22 @@
+paths:
+  migrations: /api/database/migrations
+  seeds: /api/database/seeds
+environments:
+  default_migration_table: phinxlog
+  default_database: development
+  development:
+    adapter: pgsql
+    host: postgres
+    name: demo
+    user: develop
+    pass: 'develop123'
+    port: 5432
+    charset: utf8
+  test:
+    adapter: pgsql
+    host: postgres
+    name: demo_test
+    user: develop
+    pass: 'develop123'
+    port: 5432
+    charset: utf8
