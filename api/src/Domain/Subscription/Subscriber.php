@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Domain\User;
+namespace App\Domain\Subscription;
 
 use JsonSerializable;
 
-class UserLogin implements JsonSerializable
+class Subscriber implements JsonSerializable
 {
     /**
      * @var string
@@ -20,40 +20,37 @@ class UserLogin implements JsonSerializable
     /**
      * @var string
      */
-    private $token;
-
-    /**
-     * @var string
-     */
-    private $expires;
+    private $subscriptionUuid;
 
     /**
      * @var bool
      */
-    private $active;
+    private $isConfirmed;
+
+    /**
+     * @var bool
+     */
+    private $isActive;
 
     /**
      * @var string
      */
     private $created;
 
-
     /**
-     * @param string|null $uuid
-     * @param string $userUuid
-     * @param string $token
-     * @param string $expires
-     * @param bool $active
-     * @param string $created
+     * @var string|null
      */
-    public function __construct(string $uuid, string $userUuid, string $token, string $expires, bool $active, string $created)
+    private $updated;
+
+    public function __construct(string $uuid, string $userUuid, string $subscriptionUuid, bool $isConfirmed, bool $isActive, string $created, ?string $updated)
     {
         $this->uuid = $uuid;
         $this->userUuid = $userUuid;
-        $this->token = $token;
-        $this->expires = $expires;
-        $this->active = $active;
+        $this->subscriptionUuid = $subscriptionUuid;
+        $this->isConfirmed = $isConfirmed;
+        $this->isActive = $isActive;
         $this->created = $created;
+        $this->updated = $updated;
     }
 
     /**
@@ -75,25 +72,25 @@ class UserLogin implements JsonSerializable
     /**
      * @return string
      */
-    public function getToken(): string
+    public function getSubscriptionUuid(): string
     {
-        return $this->token;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExpires(): string
-    {
-        return $this->expires;
+        return $this->subscriptionUuid;
     }
 
     /**
      * @return bool
      */
-    public function getActive(): bool
+    public function isConfirmed(): bool
     {
-        return $this->active;
+        return $this->isConfirmed;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->isActive;
     }
 
     /**
@@ -104,11 +101,11 @@ class UserLogin implements JsonSerializable
         return [
             'uuid' => $this->uuid,
             'userUuid' => $this->userUuid,
-            'token' => $this->token,
-            'expires' => $this->expires,
-            'active' => $this->active,
+            'subscriptionUuid' => $this->subscriptionUuid,
+            'isConfirmed' => $this->isConfirmed,
+            'isActive' => $this->isActive,
             'created' => $this->created,
+            'updated' => $this->updated
         ];
     }
 }
-

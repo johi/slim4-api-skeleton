@@ -14,7 +14,6 @@ class User implements JsonSerializable
 
     /**
      * @var string
-     * @todo needs to be refactored
      */
     private $name;
 
@@ -115,3 +114,4 @@ class User implements JsonSerializable
         ];
     }
 }
+

@@ -89,8 +89,8 @@ class BaseUserSeeder extends AbstractSeed
             $userActivationArray['user_uuid'],
             $userActivationArray['token'],
             $userActivationArray['expires'],
-            $userActivationArray['created_at'],
-            $userActivationArray['is_active']
+            $userActivationArray['is_active'],
+            $userActivationArray['created_at']
         );
     }
 
@@ -101,8 +101,8 @@ class BaseUserSeeder extends AbstractSeed
             'user_uuid' => $overrides['user_uuid'] ?? self::DEFAULT_USER_UUID,
             'token' => $overrides['token'] ?? self::DEFAULT_TOKEN,
             'expires' => $overrides['expires'] ?? self::DEFAULT_TOKEN_EXPIRES,
-            'created_at' => $overrides['created_at'] ?? self::DEFAULT_CREATED_AT,
-            'is_active' => $overrides['is_active'] ?? self::DEFAULT_IS_ACTIVE
+            'is_active' => $overrides['is_active'] ?? self::DEFAULT_IS_ACTIVE,
+            'created_at' => $overrides['created_at'] ?? self::DEFAULT_CREATED_AT
         ];
         self::$userLoginsTable->insert([
             $userLoginArray
@@ -112,8 +112,8 @@ class BaseUserSeeder extends AbstractSeed
             $userLoginArray['user_uuid'],
             $userLoginArray['token'],
             $userLoginArray['expires'],
-            $userLoginArray['created_at'],
-            $userLoginArray['is_active']
+            $userLoginArray['is_active'],
+            $userLoginArray['created_at']
         );
     }
 
@@ -135,8 +135,8 @@ class BaseUserSeeder extends AbstractSeed
             $passwordResetArray['user_uuid'],
             $passwordResetArray['token'],
             $passwordResetArray['expires'],
-            $passwordResetArray['created_at'],
-            $passwordResetArray['is_active']
+            $passwordResetArray['is_active'],
+            $passwordResetArray['created_at']
         );
     }
 }
