@@ -43,8 +43,7 @@ function getConfiguration() {
             'jwt_expiration' => (int)$_ENV['JWT_EXPIRATION'],
             'server_name' => $_ENV['SERVER_NAME'],
             'password_request_token_expiration' => (int)$_ENV['PASSWORD_TOKEN_EXPIRATION'],
-            'activation_token_expiration' => (int)$_ENV['ACTIVATION_TOKEN_EXPIRATION'],
-            'api_token' => $_ENV['API_TOKEN']
+            'activation_token_expiration' => (int)$_ENV['ACTIVATION_TOKEN_EXPIRATION']
         ]
     ];
 }

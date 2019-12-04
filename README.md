@@ -43,14 +43,12 @@ The stack will be run using docker-compose
 The skeleton was developed using docker engine 19.03.5, one should use a compatible version to run it.
 
 ## installation
-Clone the repo and bring up the docker instances by issueing the following commands:
+Clone the repo and bring up the docker instances by issuing the following commands:
 
     git clone git@github.com:johi/slim4-api-skeleton.git
     cd slim4-api-skeleton
-    docker network create demo
-    docker-compose run composer install
 
-Before bringing up the goodness, please create a .env file with the following contents:
+Before running the application, please create a .env file with the following contents:
 
     DOCKER=1
     DB_DRIVER=pgsql
@@ -70,6 +68,8 @@ Before bringing up the goodness, please create a .env file with the following co
 
 This is just to give you a quick bootstrap of environment variables before bringing up the docker environment:
 
+    docker network create demo
+    docker-compose run composer install
     docker-compose up -d
     docker-compose exec php bash
     #the last command will open a terminal session to the php container, from here do:
