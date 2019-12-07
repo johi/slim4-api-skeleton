@@ -42,7 +42,7 @@ class PdoUserRepository implements UserRepository
     /**
      * {@inheritdoc}
      */
-    public function findUserOfUuid(string $uuid): User
+    public function findUserOfUuid(string $uuid): ?User
     {
         $result = null;
         try {
@@ -54,16 +54,16 @@ class PdoUserRepository implements UserRepository
         } catch (PDOException $e) {
             throw new DomainServiceException(sprintf('SQL query failed for findUserOfUuid with uuid: %s', $uuid));
         }
-        if (!isset($result['uuid'])) {
-            throw new DomainRecordNotFoundException(sprintf('User with uuid: %s not found',  $uuid));
+        if (isset($result['uuid'])) {
+            return $this->getUserFromRow($result);
         }
-        return $this->getUserFromRow($result);
+        return null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function findUserOfEmail(string $email): User
+    public function findUserOfEmail(string $email): ?User
     {
         $result = null;
         try {
@@ -75,23 +75,10 @@ class PdoUserRepository implements UserRepository
         } catch (PDOException $e) {
             throw new DomainServiceException(sprintf('SQL query failed for findUserOfEmail with email :%s', $email));
         }
-        if (!isset($result['uuid'])) {
-            throw new DomainRecordNotFoundException(sprintf('User with email: %s could not be found', $email));
+        if (isset($result['uuid'])) {
+            return $this->getUserFromRow($result);
         }
-        return $this->getUserFromRow($result);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function userExists(string $email): bool
-    {
-        try {
-            $user = $this->findUserOfEmail($email);
-            return true;
-        } catch (DomainRecordNotFoundException $e) {
-            return false;
-        }
+        return null;
     }
 
     /**
@@ -99,7 +86,7 @@ class PdoUserRepository implements UserRepository
      */
     public function createUser(string $name, string $email, string $password): User
     {
-        if (!$this->userExists($email)) {
+        if (is_null($this->findUserOfEmail($email))) {
             try {
                 $uuid = $this->pdoDatabaseService->fetchUuid();
                 $query = "insert into users (uuid, name, email, password) values (:uuid, :name, :email, :password)";

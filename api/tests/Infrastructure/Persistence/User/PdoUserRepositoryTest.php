@@ -56,12 +56,9 @@ class PdoUserRepositoryTest extends DatabaseTestCase
         );
     }
 
-    /**
-     * @expectedException \App\Domain\Exception\DomainRecordNotFoundException
-     */
     public function testFindUserOfUuidThrowsDomainRecordNotFoundException()
     {
-        self::$pdoUserRepository->findUserOfUuid(self::NON_EXISTING_UUID);
+        $this->assertNull(self::$pdoUserRepository->findUserOfUuid(self::NON_EXISTING_UUID));
     }
 
     public function testFindUserOfEmail()
@@ -75,26 +72,18 @@ class PdoUserRepositoryTest extends DatabaseTestCase
             ));
     }
 
-    /**
-     * @expectedException \App\Domain\Exception\DomainRecordNotFoundException
-     */
     public function testFindUserOfEmailThrowsDomainRecordNotFoundException()
     {
-        self::$pdoUserRepository->findUserOfEmail(self::NON_EXISTING_EMAIL);
-    }
-
-    public function testUserExists()
-    {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
-        $this->assertTrue(self::$pdoUserRepository->userExists($user->getEmail()));
-        $this->assertFalse(self::$pdoUserRepository->userExists(self::NON_EXISTING_EMAIL));
+        $this->assertNull(self::$pdoUserRepository->findUserOfEmail(self::NON_EXISTING_EMAIL));
     }
 
     public function testCreateUser()
     {
-        $this->assertInstanceOf('App\Domain\User\User', self::$pdoUserRepository->createUser('Dr. Knowitall', 'doctor@example.com', 'weirdandclear'));
-        $this->assertTrue(self::$pdoUserRepository->userExists('doctor@example.com'));
+        $name = 'Dr. Knowitall';
+        $email = 'doctor@example.com';
+        $password = 'weirdandclear';
+        $this->assertInstanceOf('App\Domain\User\User', self::$pdoUserRepository->createUser($name, $email, $password));
+        $this->assertEquals($email, self::$pdoUserRepository->findUserOfEmail($email)->getEmail());
     }
 
     /**

@@ -14,22 +14,14 @@ interface UserRepository
     /**
      * @param string $uuid
      * @return User
-     * @throws UserNotFoundException
      */
-    public function findUserOfUuid(string $uuid): User;
+    public function findUserOfUuid(string $uuid): ?User;
 
     /**
      * @param string $email
      * @return User
-     * @throws UserNotFoundException
      */
-    public function findUserOfEmail(string $email): User;
-
-    /**
-     * @param string $email
-     * @return bool
-     */
-    public function userExists(string $email): bool;
+    public function findUserOfEmail(string $email): ?User;
 
     /**
      * @param string $name
