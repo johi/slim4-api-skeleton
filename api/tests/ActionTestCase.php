@@ -3,15 +3,13 @@
 namespace Tests;
 
 use App\Application\Handlers\HttpErrorHandler;
-use App\Domain\Context\Context;
-use App\Domain\Context\ContextAlias;
 use App\Domain\User\PasswordReset;
 use App\Domain\User\User;
 use App\Domain\User\UserActivation;
 use App\Infrastructure\Token\TokenService;
 use Slim\Middleware\ErrorMiddleware;
 
-class ActionTestCase extends TestCase
+abstract class ActionTestCase extends TestCase
 {
     const USER_NAME = 'bill.gates';
     const USER_EMAIL = 'bill@example.com';
@@ -72,29 +70,6 @@ class ActionTestCase extends TestCase
             $this->getToken(),
             self::CREATED_TIMESTAMP,
             true,
-            self::UPDATED_TIMESTAMP
-        );
-    }
-
-    public function getContext()
-    {
-        return new Context(
-            self::UUID_UNDER_TEST,
-            'Personal',
-            Context::TYPE_PERSONAL,
-            self::CREATED_TIMESTAMP
-        );
-    }
-
-    public function getContextAlias()
-    {
-        return new ContextAlias(
-            self::UUID_UNDER_TEST,
-            self::UUID_UNDER_TEST,
-            self::UUID_UNDER_TEST,
-            'Alias',
-            true,
-            self::CREATED_TIMESTAMP,
             self::UPDATED_TIMESTAMP
         );
     }

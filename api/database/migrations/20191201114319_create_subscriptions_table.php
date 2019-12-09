@@ -40,5 +40,20 @@ class CreateSubscriptionsTable extends AbstractMigration
             ->addColumn('description', 'string', ['limit' => 128, 'null' => true])
             ->addTimestampsWithTimezone()
             ->create();
+        $rows = [
+            [
+                'name' => 'Weekly Newsletter',
+                'description' => 'The most important take aways from the ongoing week'
+            ],
+            [
+                'name' => 'Monthly Newsletter',
+                'description' => 'The most important take aways from the ongoing month'
+            ],
+            [
+                'name' => 'Quarterly Newsletter',
+                'description' => 'The most important take aways from the ongoing quarter'
+            ]
+        ];
+        $this->table('subscriptions')->insert($rows)->save();
     }
 }

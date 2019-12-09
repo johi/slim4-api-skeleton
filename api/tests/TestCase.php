@@ -16,7 +16,7 @@ use Slim\Psr7\Headers;
 use Slim\Psr7\Request as SlimRequest;
 use Slim\Psr7\Uri;
 
-class TestCase extends PHPUnit_TestCase
+abstract class TestCase extends PHPUnit_TestCase
 {
     const JWT_TOKEN_UNDER_TEST = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1NzEwMDY1NTEsImp0aSI6IjAxZDE1ZDA0OWZkMjNkYWI2M2NjYWYyZWU1MTcyZDczIiwiaXNzIjoiYXBpLnNtYXJ0Z29hbHMudGVjaCIsImV4cCI6MTg4NjM2NjU1MSwiZGF0YSI6eyJ1dWlkIjoiMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIiwiZW1haWwiOiJqb2hhbi5zY2h1bHpAZ21haWwuY29tIn19.NOXsM3ac3_-bZBbwkYdBaHiiBaV4j8C2CSLQEmc6CK6d647NBGEJAY8wO2e9oC0qj5qiBxBKkmKVVN9SSaVOyQ';
     const UUID_UNDER_TEST = '00000000-0000-0000-0000-000000000002';
