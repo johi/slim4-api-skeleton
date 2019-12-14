@@ -212,31 +212,20 @@ class PdoUserRepositoryTest extends DatabaseTestCase
     {
         self::$manager->seed('test', 'BaseUserSeeder');
         $user = BaseUserSeeder::addUser();
-        $token = self::$pdoUserRepository->login($user, BaseUserSeeder::DEFAULT_USER_PASSWORD);
+        $token = self::$pdoUserRepository->login($user);
         $this->assertIsString($token);
         $this->assertTrue(self::$pdoUserRepository->verifyJwtToken($token, $user->getUuid()));
     }
 
-    //@todo to be removed
 //    /**
-//     * @expectedException \App\Domain\Exception\DomainRecordUpdateException
+//     * @expectedException \App\Domain\Exception\DomainRecordRequestException
 //     */
-//    public function testLoginThrowsDomainRecordUpdateException()
+//    public function testLoginThrowsDomainRecordRequestException()
 //    {
 //        self::$manager->seed('test', 'BaseUserSeeder');
-//        $user = BaseUserSeeder::addUser(['email_verified' => null]);
-//        $token = self::$pdoUserRepository->login($user, BaseUserSeeder::DEFAULT_USER_PASSWORD);
+//        $user = BaseUserSeeder::addUser();
+//        $token = self::$pdoUserRepository->login($user, 'somethingelse');
 //    }
-
-    /**
-     * @expectedException \App\Domain\Exception\DomainRecordRequestException
-     */
-    public function testLoginThrowsDomainRecordRequestException()
-    {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
-        $token = self::$pdoUserRepository->login($user, 'somethingelse');
-    }
 
     public function testFindPasswordResetOfToken()
     {

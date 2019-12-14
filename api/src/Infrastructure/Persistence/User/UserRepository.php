@@ -105,10 +105,9 @@ interface UserRepository
 
     /**
      * @param User $user
-     * @param string $password
      * @return string JWT token
      */
-    public function login(User $user, string $password): string;
+    public function login(User $user): string;
 
     /**
      * @param User $user

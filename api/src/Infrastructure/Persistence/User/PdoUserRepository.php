@@ -337,13 +337,10 @@ class PdoUserRepository implements UserRepository
     /**
      * {@inheritdoc}
      */
-    public function login(User $user, string $password): string
+    public function login(User $user): string
     {
         $uuid = $user->getUuid();
         $email = $user->getEmail();
-        if (!$this->verifyPassword($email, $password)) {
-            throw new DomainRecordRequestException(sprintf('Password validation failed for user of uuid: %s', $uuid));
-        }
         $timestamp = $this->pdoDatabaseService->fetchTimestamp();
         $identifier = $this->tokenService->generateToken();
         $this->createUserLogin($user, $identifier);
