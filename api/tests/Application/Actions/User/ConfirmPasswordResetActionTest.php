@@ -45,8 +45,8 @@ class ConfirmPasswordResetActionTest extends ActionTestCase
         $payload = $this->makeRequest('GET', '/users/password/' . $passwordReset->getToken(), [], $responseCode);
         $decodePayload = json_decode($payload, true);
         $this->assertTrue($decodePayload['error']);
-        $this->assertEquals($decodePayload['type'], ActionError::RESOURCE_NOT_FOUND);
-        $this->assertEquals($responseCode, Action::HTTP_NOT_FOUND);
+        $this->assertEquals(ActionError::RESOURCE_NOT_FOUND, $decodePayload['type']);
+        $this->assertEquals(Action::HTTP_NOT_FOUND, $responseCode );
     }
 
     public function testConfirmPasswordResetInvalid()
@@ -67,7 +67,7 @@ class ConfirmPasswordResetActionTest extends ActionTestCase
         $payload = $this->makeRequest('GET', '/users/password/' . $passwordReset->getToken(), [], $responseCode);
         $decodePayload = json_decode($payload, true);
         $this->assertTrue($decodePayload['error']);
-        $this->assertEquals($decodePayload['type'], ActionError::NOT_ALLOWED);
-        $this->assertEquals($responseCode, Action::HTTP_NOT_ALLOWED);
+        $this->assertEquals(ActionError::NOT_ALLOWED, $decodePayload['type']);
+        $this->assertEquals(Action::HTTP_NOT_ALLOWED, $responseCode);
     }
 }

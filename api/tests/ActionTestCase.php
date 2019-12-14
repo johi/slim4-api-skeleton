@@ -37,14 +37,14 @@ abstract class ActionTestCase extends TestCase
         return $this->container->get(TokenService::class)->generateToken();
     }
 
-    public function getUser()
+    public function getUser($verified = null)
     {
         return new User(
             self::UUID_UNDER_TEST,
             self::USER_NAME,
             self::USER_EMAIL,
             self::USER_PASSWORD,
-            null,
+            $verified,
             self::CREATED_TIMESTAMP,
             null
         );

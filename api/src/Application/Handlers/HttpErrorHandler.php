@@ -6,6 +6,7 @@ namespace App\Application\Handlers;
 use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
 use App\Application\Actions\Exception\HttpConflictException;
+use App\Application\Actions\Exception\HttpNotAcceptableException;
 use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Exception\HttpBadRequestException;
@@ -53,6 +54,8 @@ class HttpErrorHandler extends SlimErrorHandler
                 $error->setType(ActionError::CONFLICT);
             } elseif ($exception instanceof HttpInternalServerErrorException) {
                 $error->setType(ActionError::SERVER_ERROR);
+            } elseif ($exception instanceof HttpNotAcceptableException) {
+                $error->setType(ActionError::NOT_ACCEPTABLE);
             }
         }
 

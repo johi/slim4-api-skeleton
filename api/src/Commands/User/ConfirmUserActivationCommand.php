@@ -6,6 +6,7 @@ namespace App\Commands\User;
 
 use App\Commands\Command;
 use App\Domain\Exception\DomainRecordInvalidException;
+use App\Domain\Exception\DomainRecordNotFoundException;
 use App\Domain\Exception\DomainRecordUpdateException;
 use App\Domain\User\User;
 use App\Infrastructure\Persistence\User\UserRepository;
@@ -29,8 +30,14 @@ class ConfirmUserActivationCommand extends Command
     public function run($token): User
     {
         $userActivation = $this->userRepository->findUserActivationOfToken($token);
+        if (is_null($userActivation)) {
+            throw new DomainRecordNotFoundException(sprintf('UserActivation of token: %s not found for ConfirmUserActivationAction', $token));
+        }
         $uuid = $userActivation->getUserUuid();
         $user = $this->userRepository->findUserOfUuid($uuid);
+        if (is_null($user)) {
+            throw new DomainRecordNotFoundException(sprintf('User of uuid: %s not found for ConfirmUserActivationAction', $uuid));
+        }
         if (is_null($user->getVerified())) {
             if ($this->userRepository->userActivationIsValid($userActivation)) {
                 $user = $this->userRepository->activateUser($user);
