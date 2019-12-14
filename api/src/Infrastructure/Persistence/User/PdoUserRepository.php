@@ -341,9 +341,6 @@ class PdoUserRepository implements UserRepository
     {
         $uuid = $user->getUuid();
         $email = $user->getEmail();
-        if (is_null($user->getVerified())) {
-            throw new DomainRecordUpdateException(sprintf('Login failed since user of uuid: %s has not been activated yet', $uuid));
-        }
         if (!$this->verifyPassword($email, $password)) {
             throw new DomainRecordRequestException(sprintf('Password validation failed for user of uuid: %s', $uuid));
         }

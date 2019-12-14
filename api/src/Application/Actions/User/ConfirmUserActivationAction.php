@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\User;
 
+use App\Application\Actions\Action;
 use App\Commands\User\ConfirmUserActivationCommand;
 use App\Infrastructure\Persistence\User\UserRepository;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -28,6 +29,6 @@ class ConfirmUserActivationAction extends UserAction
             $this->logger,
             $this->userRepository
         ), $token);
-        return $this->respondWithData($user, 200);
+        return $this->respondWithData($user, Action::HTTP_OK);
     }
 }

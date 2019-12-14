@@ -217,15 +217,16 @@ class PdoUserRepositoryTest extends DatabaseTestCase
         $this->assertTrue(self::$pdoUserRepository->verifyJwtToken($token, $user->getUuid()));
     }
 
-    /**
-     * @expectedException \App\Domain\Exception\DomainRecordUpdateException
-     */
-    public function testLoginThrowsDomainRecordUpdateException()
-    {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser(['email_verified' => null]);
-        $token = self::$pdoUserRepository->login($user, BaseUserSeeder::DEFAULT_USER_PASSWORD);
-    }
+    //@todo to be removed
+//    /**
+//     * @expectedException \App\Domain\Exception\DomainRecordUpdateException
+//     */
+//    public function testLoginThrowsDomainRecordUpdateException()
+//    {
+//        self::$manager->seed('test', 'BaseUserSeeder');
+//        $user = BaseUserSeeder::addUser(['email_verified' => null]);
+//        $token = self::$pdoUserRepository->login($user, BaseUserSeeder::DEFAULT_USER_PASSWORD);
+//    }
 
     /**
      * @expectedException \App\Domain\Exception\DomainRecordRequestException

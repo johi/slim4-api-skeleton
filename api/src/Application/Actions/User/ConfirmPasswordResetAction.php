@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\User;
 
+use App\Application\Actions\Action;
 use App\Queries\User\ConfirmPasswordResetQuery;
 use Psr\Http\Message\ResponseInterface as Response;
 
@@ -15,6 +16,6 @@ class ConfirmPasswordResetAction extends UserAction
     {
         $token = (string) $this->resolveArg('token');
         $uuid = call_user_func(new ConfirmPasswordResetQuery($this->logger, $this->userRepository), $token);
-        return $this->respondWithData(['success' => 'ok'], 200);
+        return $this->respondWithData(['success' => 'ok'], Action::HTTP_OK);
     }
 }

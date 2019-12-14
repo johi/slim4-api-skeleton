@@ -2,6 +2,7 @@
 
 namespace App\Application\Actions\User;
 
+use App\Application\Actions\Action;
 use App\Commands\User\LoginCommand;
 use Psr\Http\Message\ResponseInterface as Response;
 
@@ -15,6 +16,6 @@ class LoginAction extends UserActionWithEmail
         $data = $this->getPayload();
         //@todo validate input: should check for email and password
         $jwt = call_user_func(new LoginCommand($this->logger, $this->userRepository), $data);
-        return $this->respondWithData(['jwt' => $jwt], 200);
+        return $this->respondWithData(['jwt' => $jwt], Action::HTTP_OK);
     }
 }
