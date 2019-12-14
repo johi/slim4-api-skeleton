@@ -74,7 +74,7 @@ abstract class ActionTestCase extends TestCase
         );
     }
 
-    public function makeRequest(string $method, string $path, array $payload = []): string
+    public function makeRequest(string $method, string $path, array $payload = [], int &$httpCode = null): string
     {
         $request = $this->createRequest($method, $path, [
             'HTTP_ACCEPT' => 'application/json',
@@ -82,6 +82,9 @@ abstract class ActionTestCase extends TestCase
             'useruuid' => self::UUID_UNDER_TEST
         ], $payload);
         $response = $this->app->handle($request);
+        if (!is_null($httpCode)) {
+            $httpCode = $response->getStatusCode();
+        }
         return (string) $response->getBody();
     }
 }

@@ -26,6 +26,18 @@ use Slim\Exception\HttpUnauthorizedException;
 
 abstract class Action
 {
+    //the following are added for convenience in testing that response codes are actually correctly returned
+    const HTTP_OK = 200;
+    const HTTP_CREATED = 201;
+    const HTTP_BAD_REQUEST = 400;
+    const HTTP_UNAUTHORIZED = 401;
+    const HTTP_FORBIDDEN = 403;
+    const HTTP_NOT_FOUND = 404;
+    const HTTP_NOT_ALLOWED = 405;
+    const HTTP_NOT_ACCEPTABLE = 406;
+    const HTTP_CONFLICT = 409;
+    const HTTP_INTERNAL = 500;
+
     /**
      * @var LoggerInterface
      */
@@ -152,7 +164,7 @@ abstract class Action
      * @param int $statusCode
      * @return Response
      */
-    protected function respondWithData($data = null, $statusCode = 200): Response
+    protected function respondWithData($data = null, $statusCode = self::HTTP_OK): Response
     {
         $payload = new ActionPayload($statusCode, $data);
         return $this->respond($payload);
