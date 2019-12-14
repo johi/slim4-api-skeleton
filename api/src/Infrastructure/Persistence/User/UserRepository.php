@@ -60,15 +60,14 @@ interface UserRepository
     /**
      * @param string $uuid
      * @return UserActivation
-     * @throws UserActivationNotFoundException
      */
-    public function findUserActivationOfUuid(string $uuid): UserActivation;
+    public function findUserActivationOfUuid(string $uuid): ?UserActivation;
 
     /**
      * @param string $token
      * @return UserActivation
      */
-    public function findUserActivationOfToken(string $token): UserActivation;
+    public function findUserActivationOfToken(string $token): ?UserActivation;
 
     /**
      * @param User $user
@@ -91,7 +90,7 @@ interface UserRepository
      * @param string $token
      * @return PasswordReset
      */
-    public function findPasswordResetOfToken(string $token): PasswordReset;
+    public function findPasswordResetOfToken(string $token): ?PasswordReset;
 
     /**
      * @param User $user
@@ -122,7 +121,7 @@ interface UserRepository
      * @param string $token
      * @return UserLogin
      */
-    public function findUserLoginOfToken(string $token): UserLogin;
+    public function findUserLoginOfToken(string $token): ?UserLogin;
 
     /**
      * @param User $user

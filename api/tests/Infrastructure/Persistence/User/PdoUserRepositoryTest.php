@@ -54,10 +54,6 @@ class PdoUserRepositoryTest extends DatabaseTestCase
                 $user->getUuid()
             )
         );
-    }
-
-    public function testFindUserOfUuidThrowsDomainRecordNotFoundException()
-    {
         $this->assertNull(self::$pdoUserRepository->findUserOfUuid(self::NON_EXISTING_UUID));
     }
 
@@ -70,10 +66,6 @@ class PdoUserRepositoryTest extends DatabaseTestCase
             self::$pdoUserRepository->findUserOfEmail(
                 $user->getEmail()
             ));
-    }
-
-    public function testFindUserOfEmailThrowsDomainRecordNotFoundException()
-    {
         $this->assertNull(self::$pdoUserRepository->findUserOfEmail(self::NON_EXISTING_EMAIL));
     }
 
@@ -122,7 +114,14 @@ class PdoUserRepositoryTest extends DatabaseTestCase
         $this->assertFalse(self::$pdoUserRepository->verifyPassword($user->getEmail(), BaseUserSeeder::DEFAULT_USER_PASSWORD));
     }
 
-    //testFindUserActivationOfUuid() //@todo missing test, not used at the moment
+    public function testFindUserActivationOfUuid()
+    {
+        self::$manager->seed('test', 'BaseUserSeeder');
+        $user = BaseUserSeeder::addUser(['email_verified' => null]);
+        $userActivation = BaseUserSeeder::addUserActivation();
+        $this->assertInstanceOf('\App\Domain\User\UserActivation', self::$pdoUserRepository->findUserActivationOfUuid($userActivation->getUuid()));
+        $this->assertNull(self::$pdoUserRepository->findUserActivationOfUuid(self::NON_EXISTING_UUID));
+    }
 
     public function testFindUserActivationOfToken()
     {
@@ -130,14 +129,7 @@ class PdoUserRepositoryTest extends DatabaseTestCase
         $user = BaseUserSeeder::addUser(['email_verified' => null]);
         $userActivation = BaseUserSeeder::addUserActivation();
         $this->assertInstanceOf('\App\Domain\User\UserActivation', self::$pdoUserRepository->findUserActivationOfToken($userActivation->getToken()));
-    }
-
-    /**
-     * @expectedException \App\Domain\Exception\DomainRecordNotFoundException
-     */
-    public function testFindUserActivationOfTokenThrowsDomainRecordNotFoundException()
-    {
-        self::$pdoUserRepository->findUserActivationOfToken('123');
+        $this->assertNull(self::$pdoUserRepository->findUserActivationOfToken('123'));
     }
 
     public function testUserActivationIsValid()
@@ -195,7 +187,11 @@ class PdoUserRepositoryTest extends DatabaseTestCase
         self::$manager->seed('test', 'BaseUserSeeder');
         $user = BaseUserSeeder::addUser();
         $userLogin = BaseUserSeeder::addUserLogin();
-        $this->assertInstanceOf('\App\Domain\User\UserLogin', self::$pdoUserRepository->findUserLoginOfToken($userLogin->getToken()));
+        $this->assertEquals(
+            $userLogin,
+            self::$pdoUserRepository->findUserLoginOfToken($userLogin->getToken())
+        );
+        $this->assertNull(self::$pdoUserRepository->findUserLoginOfToken($userLogin->getToken() . 'A'));
     }
 
     public function testCreateUserLogin()
@@ -219,7 +215,6 @@ class PdoUserRepositoryTest extends DatabaseTestCase
         $token = self::$pdoUserRepository->login($user, BaseUserSeeder::DEFAULT_USER_PASSWORD);
         $this->assertIsString($token);
         $this->assertTrue(self::$pdoUserRepository->verifyJwtToken($token, $user->getUuid()));
-        //@todo cover token not valid scenario
     }
 
     /**
@@ -248,6 +243,11 @@ class PdoUserRepositoryTest extends DatabaseTestCase
         $user = BaseUserSeeder::addUser();
         $passwordReset = BaseUserSeeder::addPasswordReset();
         $this->assertInstanceOf('\App\Domain\User\PasswordReset', self::$pdoUserRepository->findPasswordResetOfToken($passwordReset->getToken()));
+        $this->assertEquals(
+            $passwordReset,
+            self::$pdoUserRepository->findPasswordResetOfToken($passwordReset->getToken())
+        );
+        $this->assertNull(self::$pdoUserRepository->findPasswordResetOfToken($passwordReset->getToken() . 'A'));
     }
 
     public function testCreatePasswordReset()

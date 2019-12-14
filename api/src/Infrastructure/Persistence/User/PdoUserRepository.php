@@ -155,7 +155,7 @@ class PdoUserRepository implements UserRepository
     /**
      * {@inheritdoc}
      */
-    public function findUserActivationOfUuid(string $uuid): UserActivation
+    public function findUserActivationOfUuid(string $uuid): ?UserActivation
     {
         $result = null;
         try {
@@ -167,16 +167,16 @@ class PdoUserRepository implements UserRepository
         } catch (PDOException $e) {
             throw new DomainServiceException(sprintf('SQL query failed for findUserActivationOfUuid with uuid: %s', $uuid));
         }
-        if (!isset($result['uuid'])) {
-            throw new DomainRecordNotFoundException(sprintf('The user activation with uuid: %s could not be found', $uuid));
+        if (isset($result['uuid'])) {
+            return $this->getUserActivationFromRow($result);
         }
-        return $this->getUserActivationFromRow($result);
+        return null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function findUserActivationOfToken(string $token): UserActivation
+    public function findUserActivationOfToken(string $token): ?UserActivation
     {
         $result = null;
         try {
@@ -188,10 +188,27 @@ class PdoUserRepository implements UserRepository
         } catch (PDOException $e) {
             throw new DomainServiceException(sprintf('SQL query failed for findUserActivationOfUuid for token: %s', $token));
         }
-        if (!isset($result['uuid'])) {
-            throw new DomainRecordNotFoundException(sprintf('A UserActivation with token: %s could not be found', $token));
+        if (isset($result['uuid'])) {
+            return $this->getUserActivationFromRow($result);
         }
-        return $this->getUserActivationFromRow($result);
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function invalidateUserActivations(User $user): void
+    {
+        $uuid = $user->getUuid();
+        try {
+            $query = "update user_activations set is_active = 'f' where user_uuid = :uuid";
+            $statement = $this->pdoDatabaseConnection->prepare($query);
+            $statement->execute([
+                ':uuid' => $uuid
+            ]);
+        } catch (PDOException $e) {
+            throw new DomainServiceException(sprintf('SQL query failed for invalidateUserActivations for user of uuid: %s', $uuid));
+        }
     }
 
     /**
@@ -241,24 +258,7 @@ class PdoUserRepository implements UserRepository
     /**
      * {@inheritdoc}
      */
-    public function invalidateUserActivations(User $user): void
-    {
-        $uuid = $user->getUuid();
-        try {
-            $query = "update user_activations set is_active = 'f' where user_uuid = :uuid";
-            $statement = $this->pdoDatabaseConnection->prepare($query);
-            $statement->execute([
-                ':uuid' => $uuid
-            ]);
-        } catch (PDOException $e) {
-            throw new DomainServiceException(sprintf('SQL query failed for invalidateUserActivations for user of uuid: %s', $uuid));
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function findPasswordResetOfToken(string $token): PasswordReset
+    public function findPasswordResetOfToken(string $token): ?PasswordReset
     {
         try {
             $statement = $this->pdoDatabaseConnection->prepare("select * from password_resets where token = :token");
@@ -269,10 +269,10 @@ class PdoUserRepository implements UserRepository
         } catch (PDOException $e) {
             throw new DomainServiceException(sprintf('SQL query failed for findPasswordResetOfToken for token: %s', $token));
         }
-        if (!isset($result['uuid'])) {
-            throw new DomainRecordNotFoundException(sprintf('A PasswordReset for token: %s could not be found.', $token));
+        if (isset($result['uuid'])) {
+            return $this->getPasswordResetFromRow($result);
         }
-        return $this->getPasswordResetFromRow($result);
+        return null;
     }
 
     /**
@@ -359,7 +359,7 @@ class PdoUserRepository implements UserRepository
     /**
      * {@inheritdoc}
      */
-    public function findUserLoginOfToken(string $token): UserLogin
+    public function findUserLoginOfToken(string $token): ?UserLogin
     {
         $result = null;
         try {
@@ -371,10 +371,10 @@ class PdoUserRepository implements UserRepository
         } catch (PDOException $e) {
             throw new DomainServiceException(sprintf('SQL query failed for findUserLoginOfToken with token: %s', $token));
         }
-        if (!isset($result['uuid'])) {
-            throw new DomainRecordNotFoundException(sprintf('User login not found for token: %s', $token));
+        if (isset($result['uuid'])) {
+            return $this->getUserLoginFromRow($result);
         }
-        return $this->getUserLoginFromRow($result);
+        return null;
     }
 
     /**
