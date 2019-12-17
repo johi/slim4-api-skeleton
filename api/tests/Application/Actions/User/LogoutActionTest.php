@@ -2,6 +2,8 @@
 
 namespace Tests\Application\Actions\User;
 
+use App\Application\Actions\Action;
+use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
 use App\Infrastructure\Persistence\User\UserRepository;
 use Tests\ActionTestCase;
@@ -9,7 +11,7 @@ use Tests\ActionTestCase;
 class LogoutActionTest extends ActionTestCase
 {
 
-    public function testAction()
+    public function testLogoutAction()
     {
         $user = $this->getUser();
         $userRepositoryProphecy = $this->prophesize(UserRepository::class);
@@ -25,10 +27,25 @@ class LogoutActionTest extends ActionTestCase
 
         $payload = $this->makeRequest('GET', '/users/logout');
         $serializedPayload = json_encode(
-            new ActionPayload(200, ['success' => 'ok']),
+            new ActionPayload(Action::HTTP_OK, ['success' => 'ok']),
             JSON_PRETTY_PRINT
         );
         $this->assertEquals($serializedPayload, $payload);
     }
-    //findUserOfUuid throws some exception
+
+    public function testLogoutActionUserNotFound()
+    {
+        $userRepositoryProphecy = $this->prophesize(UserRepository::class);
+        $userRepositoryProphecy
+            ->findUserOfUuid(self::UUID_UNDER_TEST)
+            ->willReturn(null)
+            ->shouldBeCalledOnce();
+        $this->container->set(UserRepository::class, $userRepositoryProphecy->reveal());
+        $responseCode = 0;
+        $payload = $this->makeRequest('GET', '/users/logout', [], $responseCode);
+        $decodedPayload = json_decode($payload, true);
+        $this->assertTrue($decodedPayload['error']);
+        $this->assertEquals(ActionError::RESOURCE_NOT_FOUND, $decodedPayload['type']);
+        $this->assertEquals(Action::HTTP_NOT_FOUND, $responseCode);
+    }
 }
