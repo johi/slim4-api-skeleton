@@ -5,6 +5,7 @@ namespace App\Commands\User;
 
 use App\Commands\Command;
 use App\Domain\Exception\DomainRecordInvalidException;
+use App\Domain\Exception\DomainRecordNotFoundException;
 use App\Infrastructure\Persistence\User\UserRepository;
 use Psr\Log\LoggerInterface;
 
@@ -23,7 +24,13 @@ class PasswordResetCommand extends Command
     {
         $token = $data['token'];
         $passwordRequest = $this->userRepository->findPasswordResetOfToken($token);
+        if (is_null($passwordRequest)) {
+            throw new DomainRecordNotFoundException(sprintf('PasswordReset of token: %s not found for PasswordResetCommand', $token));
+        }
         $user = $this->userRepository->findUserOfUuid($passwordRequest->getUserUuid());
+        if (is_null($user)) {
+            throw new DomainRecordNotFoundException(sprintf('User of uuid: %s not found for PasswordResetCommand', $passwordRequest->getUserUuid()));
+        }
         if ($this->userRepository->passwordResetIsValid($passwordRequest)) {
             $user = $this->userRepository->updatePassword($user, $data['password']);
             $uuid = $user->getUuid();
