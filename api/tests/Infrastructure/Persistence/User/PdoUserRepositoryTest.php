@@ -78,16 +78,6 @@ class PdoUserRepositoryTest extends DatabaseTestCase
         $this->assertEquals($email, self::$pdoUserRepository->findUserOfEmail($email)->getEmail());
     }
 
-    /**
-     * @expectedException \App\Domain\Exception\DomainRecordDuplicateException
-     */
-    public function testCreateUserThrowsDomainDuplicateException()
-    {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
-        self::$pdoUserRepository->createUser($user->getName(), $user->getEmail(), 'somethingweired');
-    }
-
     public function testActivateUser()
     {
         self::$manager->seed('test', 'BaseUserSeeder');

@@ -86,23 +86,19 @@ class PdoUserRepository implements UserRepository
      */
     public function createUser(string $name, string $email, string $password): User
     {
-        if (is_null($this->findUserOfEmail($email))) {
-            try {
-                $uuid = $this->pdoDatabaseService->fetchUuid();
-                $query = "insert into users (uuid, name, email, password) values (:uuid, :name, :email, :password)";
-                $statement = $this->pdoDatabaseConnection->prepare($query);
-                $statement->execute([
-                    ':uuid' => $uuid,
-                    ':name' => $name,
-                    ':email' => $email,
-                    ':password' => password_hash($password, PASSWORD_BCRYPT)
-                ]);
-                return $this->findUserOfUuid($uuid);
-            } catch (PDOException $e) {
-                throw new DomainServiceException(sprintf('SQL query failed for createUser name: %s email %s', $name, $email));
-            }
-        } else {
-           throw new DomainRecordDuplicateException(sprintf('A user with email: %s already exists', $email));
+        try {
+            $uuid = $this->pdoDatabaseService->fetchUuid();
+            $query = "insert into users (uuid, name, email, password) values (:uuid, :name, :email, :password)";
+            $statement = $this->pdoDatabaseConnection->prepare($query);
+            $statement->execute([
+                ':uuid' => $uuid,
+                ':name' => $name,
+                ':email' => $email,
+                ':password' => password_hash($password, PASSWORD_BCRYPT)
+            ]);
+            return $this->findUserOfUuid($uuid);
+        } catch (PDOException $e) {
+            throw new DomainServiceException(sprintf('SQL query failed for createUser name: %s email %s', $name, $email));
         }
     }
 

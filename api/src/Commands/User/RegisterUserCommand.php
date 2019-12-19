@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Commands\User;
 
 use App\Commands\Command;
+use App\Domain\Exception\DomainRecordDuplicateException;
 use App\Domain\User\User;
 use App\Infrastructure\Email\EmailService;
 use App\Infrastructure\Email\SimpleEmailMessage;
@@ -26,6 +27,9 @@ class RegisterUserCommand extends Command
 
     public function run($data): User
     {
+        if (!is_null($this->userRepository->findUserOfEmail($data['email']))) {
+            throw new DomainRecordDuplicateException(sprintf('A user with email: %s already exists for RegisterUserCommand', $data['email']));
+        }
         $user = $this->userRepository->createUser($data['name'], $data['email'], $data['password']);
         $userActivation = $this->userRepository->createUserActivation($user);
         //@todo need to know when the email bounces, marking email as sent, need to rethink domain model?
