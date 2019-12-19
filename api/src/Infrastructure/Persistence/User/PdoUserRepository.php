@@ -211,24 +211,20 @@ class PdoUserRepository implements UserRepository
     {
         $token = $this->tokenService->generateToken();
         $userUuid = $user->getUuid();
-        if (is_null($user->getVerified())) {
-            $this->invalidateUserActivations($user);
-            try {
-                $uuid = $this->pdoDatabaseService->fetchUuid();
-                $expires = $this->pdoDatabaseService->fetchTimestamp($this->activationTokenExpiration);
-                $query = "insert into user_activations (uuid, user_uuid, token, expires) values (:uuid, :user_uuid, :token, :expires)";
-                $statement = $this->pdoDatabaseConnection->prepare($query);
-                $statement->execute([
-                    ':uuid' => $uuid,
-                    ':user_uuid' => $userUuid,
-                    ':token' => $token,
-                    ':expires' => $expires
-                ]);
-            } catch (PDOException $exception) {
-                throw new DomainServiceException(sprintf('SQL query failed for createUserActivation for user with uuid: %s', $userUuid));
-            }
-        } else {
-            throw new DomainRecordUpdateException(sprintf('The user of uuid: %s has already been activated previously', $userUuid));
+        $this->invalidateUserActivations($user);
+        try {
+            $uuid = $this->pdoDatabaseService->fetchUuid();
+            $expires = $this->pdoDatabaseService->fetchTimestamp($this->activationTokenExpiration);
+            $query = "insert into user_activations (uuid, user_uuid, token, expires) values (:uuid, :user_uuid, :token, :expires)";
+            $statement = $this->pdoDatabaseConnection->prepare($query);
+            $statement->execute([
+                ':uuid' => $uuid,
+                ':user_uuid' => $userUuid,
+                ':token' => $token,
+                ':expires' => $expires
+            ]);
+        } catch (PDOException $exception) {
+            throw new DomainServiceException(sprintf('SQL query failed for createUserActivation for user with uuid: %s', $userUuid));
         }
         return $this->findUserActivationOfToken($token);
     }

@@ -162,16 +162,6 @@ class PdoUserRepositoryTest extends DatabaseTestCase
         $this->assertFalse(self::$pdoUserRepository->userActivationIsValid($userActivation));
     }
 
-    /**
-     * @expectedException \App\Domain\Exception\DomainRecordUpdateException
-     */
-    public function testCreateUserActivationOnAlreadyActivatedUserThrowsDomainRecordUpdateException()
-    {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
-        $userActivation = self::$pdoUserRepository->createUserActivation($user);
-    }
-
     public function testFindUserLoginOfToken()
     {
         self::$manager->seed('test', 'BaseUserSeeder');

@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Commands\User;
 
 use App\Commands\Command;
+use App\Domain\Exception\DomainRecordNotFoundException;
+use App\Domain\Exception\DomainRecordUpdateException;
 use App\Domain\User\User;
 use App\Infrastructure\Email\EmailService;
 use App\Infrastructure\Email\SimpleEmailMessage;
@@ -27,6 +29,12 @@ class RequestUserActivationCommand extends Command
     {
         //@todo validate
         $user = $this->userRepository->findUserOfEmail($data['email']);
+        if (is_null($user)) {
+            throw new DomainRecordNotFoundException(sprintf('User of email: %s not found for RequestUserActivationCommand', $data['email']));
+        }
+        if (!is_null($user->getVerified())) {
+            throw new DomainRecordUpdateException(sprintf('The user of uuid: %s has already been activated previously for RequestUserActivationCommand', $user->getUuid()));
+        }
         //@todo if already activated do not create a new one!, add test
         $userActivation = $this->userRepository->createUserActivation($user);
         $this->emailService->send(
