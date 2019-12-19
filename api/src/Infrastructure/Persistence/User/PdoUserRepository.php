@@ -4,10 +4,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\User;
 
 use App\Application\Configuration\AppConfiguration;
-use App\Domain\Exception\DomainRecordDuplicateException;
 use App\Domain\Exception\DomainRecordNotAuthorizedException;
-use App\Domain\Exception\DomainRecordNotFoundException;
-use App\Domain\Exception\DomainRecordRequestException;
 use App\Domain\Exception\DomainRecordUpdateException;
 use App\Domain\Exception\DomainServiceException;
 use App\Domain\User\PasswordReset;
@@ -308,24 +305,20 @@ class PdoUserRepository implements UserRepository
     {
         $userUuid = $user->getUuid();
         $token = $this->tokenService->generateToken();
-        if (!is_null($user->getVerified())) {
-            $this->invalidatePasswordResets($user);
-            $uuid = $this->pdoDatabaseService->fetchUuid();
-            $expires = $this->pdoDatabaseService->fetchTimestamp($this->passwordRequestTokenExpiration);
-            $query = "insert into password_resets (uuid, user_uuid, token, expires) values (:uuid, :user_uuid, :token, :expires)";
-            try {
-                $statement = $this->pdoDatabaseConnection->prepare($query);
-                $statement->execute([
-                    ':uuid' => $uuid,
-                    ':user_uuid' => $userUuid,
-                    ':token' => $token,
-                    ':expires' => $expires
-                ]);
-            } catch (PDOException $exception) {
-                throw new DomainServiceException(sprintf('SQL query failed for createPasswordReset for user uuid: %s', $userUuid));
-            }
-        } else {
-            throw new DomainRecordUpdateException(sprintf('The user of uuid: %s has not been activated yet', $userUuid));
+        $this->invalidatePasswordResets($user);
+        $uuid = $this->pdoDatabaseService->fetchUuid();
+        $expires = $this->pdoDatabaseService->fetchTimestamp($this->passwordRequestTokenExpiration);
+        $query = "insert into password_resets (uuid, user_uuid, token, expires) values (:uuid, :user_uuid, :token, :expires)";
+        try {
+            $statement = $this->pdoDatabaseConnection->prepare($query);
+            $statement->execute([
+                ':uuid' => $uuid,
+                ':user_uuid' => $userUuid,
+                ':token' => $token,
+                ':expires' => $expires
+            ]);
+        } catch (PDOException $exception) {
+            throw new DomainServiceException(sprintf('SQL query failed for createPasswordReset for user uuid: %s', $userUuid));
         }
         return $this->findPasswordResetOfToken($token);
     }

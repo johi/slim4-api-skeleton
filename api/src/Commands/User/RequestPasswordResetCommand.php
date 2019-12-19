@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Commands\User;
 
 use App\Commands\Command;
+use App\Domain\Exception\DomainRecordNotFoundException;
+use App\Domain\Exception\DomainRecordUpdateException;
 use App\Infrastructure\Email\EmailService;
 use App\Infrastructure\Email\SimpleEmailMessage;
 use App\Infrastructure\Persistence\User\UserRepository;
@@ -25,6 +27,12 @@ class RequestPasswordResetCommand extends Command
     public function run($data)
     {
         $user = $this->userRepository->findUserOfEmail($data['email']);
+        if (is_null($user)) {
+            throw new DomainRecordNotFoundException(sprintf('User of email: %s not found for RequestPasswordResetCommand', $data['email']));
+        }
+        if (is_null($user->getVerified())) {
+            throw new DomainRecordUpdateException(sprintf('The user of uuid: %s has not been activated yet for RequestPasswordResetCommand', $user->getUuid()));
+        }
         $passwordReset = $this->userRepository->createPasswordReset($user);
         $this->emailService->send(
             new SimpleEmailMessage('forgotPassword.html', [

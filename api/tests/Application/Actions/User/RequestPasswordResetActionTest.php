@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Tests\Application\Actions\User;
 
+use App\Application\Actions\Action;
+use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
 use App\Infrastructure\Email\EmailService;
 use App\Infrastructure\Email\SimpleEmailMessage;
@@ -12,9 +14,9 @@ use Tests\ActionTestCase;
 class RequestPasswordResetActionTest extends ActionTestCase
 {
 
-    public function testAction()
+    public function testRequestPasswordResetAction()
     {
-        $user = $this->getUser();
+        $user = $this->getUser(self::UPDATED_TIMESTAMP);
         $passwordReset = $this->getPasswordReset();
         $userRepositoryProphecy = $this->prophesize(UserRepository::class);
         $userRepositoryProphecy
@@ -48,7 +50,43 @@ class RequestPasswordResetActionTest extends ActionTestCase
         $this->assertEquals($serializedPayload, $payload);
     }
 
-    //findUserOfEmail throws some exception
-    //createPasswordReset throws some exception
+    public function testRequestPasswordResetActionUserNotFound()
+    {
+        $user = $this->getUser(self::UPDATED_TIMESTAMP);
+        $passwordReset = $this->getPasswordReset();
+        $userRepositoryProphecy = $this->prophesize(UserRepository::class);
+        $userRepositoryProphecy
+            ->findUserOfEmail(self::USER_EMAIL)
+            ->willReturn(null)
+            ->shouldBeCalledOnce();
+        $this->container->set(UserRepository::class, $userRepositoryProphecy->reveal());
+        $responseCode = 0;
+        $payload = $this->makeRequest('POST', '/users/password', [
+            'email' => self::USER_EMAIL
+        ], $responseCode);
+        $decodedPayload = json_decode($payload, true);
+        $this->assertTrue($decodedPayload['error']);
+        $this->assertEquals(ActionError::RESOURCE_NOT_FOUND, $decodedPayload['type']);
+        $this->assertEquals(Action::HTTP_NOT_FOUND, $responseCode);
+    }
 
+    public function testRequestPasswordResetActionUserNotVerified()
+    {
+        $user = $this->getUser();
+        $passwordReset = $this->getPasswordReset();
+        $userRepositoryProphecy = $this->prophesize(UserRepository::class);
+        $userRepositoryProphecy
+            ->findUserOfEmail(self::USER_EMAIL)
+            ->willReturn($user)
+            ->shouldBeCalledOnce();
+        $this->container->set(UserRepository::class, $userRepositoryProphecy->reveal());
+        $responseCode = 0;
+        $payload = $this->makeRequest('POST', '/users/password', [
+            'email' => self::USER_EMAIL
+        ], $responseCode);
+        $decodedPayload = json_decode($payload, true);
+        $this->assertTrue($decodedPayload['error']);
+        $this->assertEquals(ActionError::NOT_ACCEPTABLE, $decodedPayload['type']);
+        $this->assertEquals(Action::HTTP_NOT_ACCEPTABLE, $responseCode);
+    }
 }
