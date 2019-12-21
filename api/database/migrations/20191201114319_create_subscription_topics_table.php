@@ -3,7 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 use Phinx\Util\Literal;
 
-class CreateSubscriptionsTable extends AbstractMigration
+class CreateSubscriptionTopicsTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -32,7 +32,7 @@ class CreateSubscriptionsTable extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('subscriptions', ['id' => false, 'primary_key' => 'uuid']);
+        $table = $this->table('subscription_topics', ['id' => false, 'primary_key' => 'uuid']);
         $table->addColumn('uuid', 'uuid', [
             'default' => Literal::from('uuid_generate_v4()')
         ])
@@ -54,6 +54,6 @@ class CreateSubscriptionsTable extends AbstractMigration
                 'description' => 'The most important take aways from the ongoing quarter'
             ]
         ];
-        $this->table('subscriptions')->insert($rows)->save();
+        $table->insert($rows)->save();
     }
 }

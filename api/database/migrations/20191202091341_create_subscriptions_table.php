@@ -3,7 +3,7 @@
 use Phinx\Migration\AbstractMigration;
 use Phinx\Util\Literal;
 
-class CreateSubscribersTable extends AbstractMigration
+class CreateSubscriptionsTable extends AbstractMigration
 {
     /**
      * Change Method.
@@ -32,12 +32,12 @@ class CreateSubscribersTable extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('subscribers', ['id' => false, 'primary_key' => 'uuid']);
+        $table = $this->table('subscriptions', ['id' => false, 'primary_key' => 'uuid']);
         $table->addColumn('uuid', 'uuid', [
             'default' => Literal::from('uuid_generate_v4()')
         ])
             ->addColumn('user_uuid', 'uuid', ['null' => false])
-            ->addColumn('subscription_uuid', 'uuid', ['null' => false])
+            ->addColumn('subscription_topic_uuid', 'uuid', ['null' => false])
             ->addColumn('is_confirmed', 'boolean', ['default' => false])
             ->addColumn('is_active', 'boolean', ['default' => true])
             ->addTimestampsWithTimezone()

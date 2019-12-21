@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 // namespace Tests\Database\Seeds\User;
 
+use App\Domain\Subscription\SubscriptionTopic;
 use App\Domain\Subscription\Subscription;
-use App\Domain\Subscription\Subscriber;
 use Phinx\Seed\AbstractSeed;
 
 class BaseSubscriptionSeeder extends AbstractSeed
 {
-    const DEFAULT_SUBSCRIPTION_UUID = '00000000-0000-0000-0000-000000000000';
-    const DEFAULT_SUBSCRIPTION_NAME = 'Weekly Newsletter';
-    const DEFAULT_SUBSCRIPTION_DESCRIPTION = 'The most important take aways from the ongoing week';
+    const DEFAULT_SUBSCRIPTION_TOPIC_UUID = '00000000-0000-0000-0000-000000000000';
+    const DEFAULT_SUBSCRIPTION_TOPIC_NAME = 'Weekly Newsletter';
+    const DEFAULT_SUBSCRIPTION_TOPIC_DESCRIPTION = 'The most important take aways from the ongoing week';
     const DEFAULT_CREATED_AT = '2019-10-05 08:00:00+00';
     const DEFAULT_UPDATED_AT = '2019-10-05 08:00:00+00';
     const DEFAULT_SUBSCRIBER_UUID = '10000000-0000-0000-0000-000000000000';
@@ -19,8 +19,8 @@ class BaseSubscriptionSeeder extends AbstractSeed
     const DEFAULT_SUBSCRIBER_IS_CONFIRMED = true;
     const DEFAULT_SUBSCRIBER_IS_ACTIVE = true;
 
+    private static $subscriptionTopicsTable;
     private static $subscriptionsTable;
-    private static $subscribersTable;
 
     /**
      * Run Method.
@@ -32,23 +32,23 @@ class BaseSubscriptionSeeder extends AbstractSeed
      */
     public function run()
     {
+        self::$subscriptionTopicsTable = $this->table('subscription_topics');
         self::$subscriptionsTable = $this->table('subscriptions');
-        self::$subscribersTable = $this->table('subscribers');
     }
 
-    public static function addSubscription(array $overrides = []): Subscription
+    public static function addSubscriptionTopic(array $overrides = []): SubscriptionTopic
     {
         $subscriptionArray = [
-            'uuid' => $overrides['uuid'] ?? self::DEFAULT_SUBSCRIPTION_UUID,
-            'name' => $overrides['name'] ?? self::DEFAULT_SUBSCRIPTION_NAME,
-            'description' => $overrides['email'] ??  self::DEFAULT_SUBSCRIPTION_DESCRIPTION,
+            'uuid' => $overrides['uuid'] ?? self::DEFAULT_SUBSCRIPTION_TOPIC_UUID,
+            'name' => $overrides['name'] ?? self::DEFAULT_SUBSCRIPTION_TOPIC_NAME,
+            'description' => $overrides['email'] ??  self::DEFAULT_SUBSCRIPTION_TOPIC_DESCRIPTION,
             'created_at' => $overrides['created_at'] ?? self::DEFAULT_CREATED_AT,
             'updated_at' => $overrides['updated_at'] ?? self::DEFAULT_UPDATED_AT
         ];
-        self::$subscriptionsTable->insert([
+        self::$subscriptionTopicsTable->insert([
             $subscriptionArray
         ])->save();
-        return new Subscription(
+        return new SubscriptionTopic(
             $subscriptionArray['uuid'],
             $subscriptionArray['name'],
             $subscriptionArray['description'],
@@ -57,24 +57,24 @@ class BaseSubscriptionSeeder extends AbstractSeed
         );
     }
 
-    public static function addSubscriber(array $overrides = []): Subscriber
+    public static function addSubscription(array $overrides = []): Subscription
     {
         $subscriberArray = [
             'uuid' => $overrides['uuid'] ?? self::DEFAULT_SUBSCRIBER_UUID,
             'user_uuid' => $overrides['user_uuid'] ?? self::DEFAULT_USER_UUID,
-            'subscription_uuid' => $overrides['subscription_uuid'] ?? self::DEFAULT_SUBSCRIPTION_UUID,
+            'subscription_topic_uuid' => $overrides['subscription_topic_uuid'] ?? self::DEFAULT_SUBSCRIPTION_TOPIC_UUID,
             'is_confirmed' => $overrides['is_confirmed'] ?? self::DEFAULT_SUBSCRIBER_IS_CONFIRMED,
             'is_active' => $overrides['is_active'] ?? self::DEFAULT_SUBSCRIBER_IS_ACTIVE,
             'created_at' => $overrides['created_at'] ?? self::DEFAULT_CREATED_AT,
             'updated_at' => $overrides['updated_at'] ?? self::DEFAULT_UPDATED_AT
         ];
-        self::$subscribersTable->insert([
+        self::$subscriptionsTable->insert([
             $subscriberArray
         ])->save();
-        return new Subscriber(
+        return new Subscription(
             $subscriberArray['uuid'],
             $subscriberArray['user_uuid'],
-            $subscriberArray['subscription_uuid'],
+            $subscriberArray['subscription_topic_uuid'],
             $subscriberArray['is_confirmed'],
             $subscriberArray['is_active'],
             $subscriberArray['created_at'],

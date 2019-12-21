@@ -9,7 +9,7 @@ use Tests\DatabaseTestCase;
 
 class PdoUserRepositoryTest extends DatabaseTestCase
 {
-    const NON_EXISTING_SUBSCRIBER_UUID = '00000000-0000-0000-0000-111111111111';
+    const NON_EXISTING_SUBSCRIPTION_UUID = '00000000-0000-0000-0000-111111111111';
 
     protected static $pdoSubscriptionRepository;
 
@@ -42,70 +42,73 @@ class PdoUserRepositoryTest extends DatabaseTestCase
         self::$manager->rollback('test', 0);
     }
 
-    public function testFindAllSubscriptions()
+    public function testFindAllSubscriptionTopics()
     {
         self::$manager->seed('test', 'BaseSubscriptionSeeder');
-        $subscriptions = self::$pdoSubscriptionRepository->findAllSubscriptions();
+        $subscriptionTopics = self::$pdoSubscriptionRepository->findAllSubscriptionTopics();
         $this->assertCount(
             3, //schema migrated with 3 preset subscriptions
-            $subscriptions
+            $subscriptionTopics
         );
-        foreach ($subscriptions as $subscription) {
-            $this->assertInstanceOf('\App\Domain\Subscription\Subscription', $subscription);
+        foreach ($subscriptionTopics as $subscriptionTopic) {
+            $this->assertInstanceOf('\App\Domain\Subscription\SubscriptionTopic', $subscriptionTopic);
         }
     }
 
-    public function testFindSubscriberOfUuid()
+    public function testFindSubscriptionOfUuid()
     {
         self::$manager->seed('test', 'BaseSubscriptionSeeder');
-        $subscription = BaseSubscriptionSeeder::addSubscription(); //only necessary when using foreign keys
-        $subscriber = BaseSubscriptionSeeder::addSubscriber();
-        $this->assertEquals(
-            $subscriber,
-            self::$pdoSubscriptionRepository->findSubscriberOfUuid($subscriber->getUuid()));
-        $this->assertNull(self::$pdoSubscriptionRepository->findSubscriberOfUuid(self::NON_EXISTING_SUBSCRIBER_UUID));
-    }
-
-    public function testFindSubscriberOfUserUuidAndSubscriptionUuid()
-    {
-        self::$manager->seed('test', 'BaseSubscriptionSeeder');
-        $subscription = BaseSubscriptionSeeder::addSubscription(); //only necessary when using foreign keys
-        $subscriber = BaseSubscriptionSeeder::addSubscriber();
-        $this->assertEquals(
-            $subscriber,
-            self::$pdoSubscriptionRepository->findSubscriberOfUserUuidAndSubscriptionUuid($subscriber->getUserUuid(), $subscriber->getSubscriptionUuid()));
-    }
-
-    public function testCreateSubscriber()
-    {
-        self::$manager->seed('test', 'BaseSubscriptionSeeder');
+        $subscriptionTopic = BaseSubscriptionSeeder::addSubscriptionTopic(); //only necessary when using foreign keys
         $subscription = BaseSubscriptionSeeder::addSubscription();
-        $subscriber = self::$pdoSubscriptionRepository->createSubscriber($subscription, self::NON_EXISTING_SUBSCRIBER_UUID, false, false);
-        $this->assertEquals(self::NON_EXISTING_SUBSCRIBER_UUID, $subscriber->getUserUuid());
-        $this->assertFalse($subscriber->isConfirmed());
-        $this->assertFalse($subscriber->isActive());
+        $this->assertEquals(
+            $subscription,
+            self::$pdoSubscriptionRepository->findSubscriptionOfUuid($subscription->getUuid()));
+        $this->assertNull(self::$pdoSubscriptionRepository->findSubscriptionOfUuid(self::NON_EXISTING_SUBSCRIPTION_UUID));
+    }
+
+    public function testFindSubscriptionOfUserUuidAndSubscriptionTopicUuid()
+    {
+        self::$manager->seed('test', 'BaseSubscriptionSeeder');
+        $subscriptionTopic = BaseSubscriptionSeeder::addSubscriptionTopic(); //only necessary when using foreign keys
+        $subscription = BaseSubscriptionSeeder::addSubscription();
+        $this->assertEquals(
+            $subscription,
+            self::$pdoSubscriptionRepository->findSubscriptionOfUserUuidAndSubscriptionTopicUuid($subscription->getUserUuid(), $subscription->getSubscriptionTopicUuid()));
+    }
+
+    public function testCreateSubscription()
+    {
+        self::$manager->seed('test', 'BaseSubscriptionSeeder');
+        $subscriptionTopic = BaseSubscriptionSeeder::addSubscriptionTopic();
+        $subscription = self::$pdoSubscriptionRepository->createSubscription($subscriptionTopic, self::NON_EXISTING_SUBSCRIPTION_UUID, false, false);
+        $this->assertEquals(self::NON_EXISTING_SUBSCRIPTION_UUID, $subscription->getUserUuid());
+        $this->assertFalse($subscription->isConfirmed());
+        $this->assertFalse($subscription->isActive());
     }
 
     /**
      * @expectedException \App\Domain\Exception\DomainRecordDuplicateException
      */
-    public function testCreateSubscriberThrowsDomainRecordDuplicateException()
+    public function testCreateSubscriptionThrowsDomainRecordDuplicateException()
     {
         self::$manager->seed('test', 'BaseSubscriptionSeeder');
-        $subscription = BaseSubscriptionSeeder::addSubscription();
-        $subscriber = self::$pdoSubscriptionRepository->createSubscriber($subscription, self::NON_EXISTING_SUBSCRIBER_UUID, false, false);
-        $subscriber = self::$pdoSubscriptionRepository->createSubscriber($subscription, self::NON_EXISTING_SUBSCRIBER_UUID, false, false);
+        $subscriptionTopic = BaseSubscriptionSeeder::addSubscriptionTopic();
+        $subscription = self::$pdoSubscriptionRepository->createSubscription($subscriptionTopic, self::NON_EXISTING_SUBSCRIPTION_UUID, false, false);
+        $subscription = self::$pdoSubscriptionRepository->createSubscription($subscriptionTopic, self::NON_EXISTING_SUBSCRIPTION_UUID, false, false);
     }
 
-    public function testUpdateSubscriber()
+    public function testUpdateSubscription()
     {
         self::$manager->seed('test', 'BaseSubscriptionSeeder');
-        $subscription = BaseSubscriptionSeeder::addSubscription();
-        $subscriber = self::$pdoSubscriptionRepository->createSubscriber($subscription, self::NON_EXISTING_SUBSCRIBER_UUID, false, false);
-        $subscriber = self::$pdoSubscriptionRepository->updateSubscriber($subscription, self::NON_EXISTING_SUBSCRIBER_UUID, true, true);
-        $this->assertEquals(self::NON_EXISTING_SUBSCRIBER_UUID, $subscriber->getUserUuid());
-        $this->assertTrue($subscriber->isConfirmed());
-        $this->assertTrue($subscriber->isActive());
+        $subscriptionTopic = BaseSubscriptionSeeder::addSubscriptionTopic();
+        $subscription = BaseSubscriptionSeeder::addSubscription(['is_confirmed' => false, 'is_active' => false]);
+//        $subscription = self::$pdoSubscriptionRepository->createSubscription($subscriptionTopic, self::NON_EXISTING_SUBSCRIPTION_UUID, false, false);
+        $this->assertFalse($subscription->isConfirmed());
+        $this->assertFalse($subscription->isActive());
+        $subscription = self::$pdoSubscriptionRepository->updateSubscription($subscriptionTopic, $subscription->getUserUuid(), true, true);
+//        $this->assertEquals(self::NON_EXISTING_SUBSCRIPTION_UUID, $subscription->getUserUuid());
+        $this->assertTrue($subscription->isConfirmed());
+        $this->assertTrue($subscription->isActive());
     }
 
     /**
@@ -114,7 +117,7 @@ class PdoUserRepositoryTest extends DatabaseTestCase
     public function testUpdateSubscriberThrowsDomainRecordNotFoundException()
     {
         self::$manager->seed('test', 'BaseSubscriptionSeeder');
-        $subscription = BaseSubscriptionSeeder::addSubscription();
-        $subscriber = self::$pdoSubscriptionRepository->updateSubscriber($subscription, self::NON_EXISTING_SUBSCRIBER_UUID, true, true);
+        $subscriptionTopic = BaseSubscriptionSeeder::addSubscriptionTopic();
+        $subscription = self::$pdoSubscriptionRepository->updateSubscription($subscriptionTopic, self::NON_EXISTING_SUBSCRIPTION_UUID, true, true);
     }
 }

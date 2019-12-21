@@ -15,12 +15,22 @@ class Subscription implements JsonSerializable
     /**
      * @var string
      */
-    private $name;
+    private $userUuid;
 
     /**
      * @var string
      */
-    private $description;
+    private $subscriptionTopicUuid;
+
+    /**
+     * @var bool
+     */
+    private $isConfirmed;
+
+    /**
+     * @var bool
+     */
+    private $isActive;
 
     /**
      * @var string
@@ -32,11 +42,13 @@ class Subscription implements JsonSerializable
      */
     private $updated;
 
-    public function __construct(string $uuid, string $name, string $description, string $created, ?string $updated)
+    public function __construct(string $uuid, string $userUuid, string $subscriptionTopicUuid, bool $isConfirmed, bool $isActive, string $created, ?string $updated)
     {
         $this->uuid = $uuid;
-        $this->name = $name;
-        $this->description = $description;
+        $this->userUuid = $userUuid;
+        $this->subscriptionTopicUuid = $subscriptionTopicUuid;
+        $this->isConfirmed = $isConfirmed;
+        $this->isActive = $isActive;
         $this->created = $created;
         $this->updated = $updated;
     }
@@ -52,17 +64,33 @@ class Subscription implements JsonSerializable
     /**
      * @return string
      */
-    public function getName(): string
+    public function getUserUuid(): string
     {
-        return $this->name;
+        return $this->userUuid;
     }
 
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getSubscriptionTopicUuid(): string
     {
-        return $this->description;
+        return $this->subscriptionTopicUuid;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isConfirmed(): bool
+    {
+        return $this->isConfirmed;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->isActive;
     }
 
     /**
@@ -72,8 +100,10 @@ class Subscription implements JsonSerializable
     {
         return [
             'uuid' => $this->uuid,
-            'name' => $this->name,
-            'description' => $this->description,
+            'userUuid' => $this->userUuid,
+            'subscriptionTopicUuid' => $this->subscriptionTopicUuid,
+            'isConfirmed' => $this->isConfirmed,
+            'isActive' => $this->isActive,
             'created' => $this->created,
             'updated' => $this->updated
         ];
