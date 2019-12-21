@@ -12,6 +12,8 @@ use App\Application\Actions\User\RequestUserActivationAction;
 use App\Application\Actions\User\ViewUserAction;
 use App\Application\Middleware\AuthorizationMiddleware;
 use App\Infrastructure\Persistence\User\UserRepository;
+use Application\Actions\Subscription\CreateSubscriptionsAction;
+use Application\Actions\Subscription\ListSubscriptionsTopics;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -42,4 +44,16 @@ return function (App $app) {
         $group->get('/logout', LogoutAction::class);
     })->add(new AuthorizationMiddleware($container->get(LoggerInterface::class), $container->get(UserRepository::class)));
 
+    $app->group('/subscriptions', function (Group $group) use ($container) {
+       $group->get('/topics', ListSubscriptionsTopics::class);
+       $group->post('/', CreateSubscriptionsAction::class); //->create user if neccesary and corresponding subscriptions, send email confirming user and subscriptions, -> update
+       $group->get('/confirm/{token}', ConfirmCreateSubscriptions::class);
+       // $group->delete('/', RemoveSubscriptionsAction::class);
+       // $group->get('/remove/{token}', ConfirmRemoveSubscriptionsAction::class);
+    });
+
+    $app->group('/subscriptions', function (Group $group) use ($container) {
+        // $group->put('/', UpdateSubscriptionsAction::class);
+        // $group->get('/', ViewSubscriptionsAction::class);
+    })->add(new AuthorizationMiddleware($container->get(LoggerInterface::class), $container->get(UserRepository::class)));
 };
