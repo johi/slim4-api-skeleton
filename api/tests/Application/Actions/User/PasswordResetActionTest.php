@@ -6,9 +6,8 @@ use App\Application\Actions\Action;
 use App\Application\Actions\ActionError;
 use App\Infrastructure\Persistence\User\UserRepository;
 use App\Infrastructure\Token\TokenService;
-use Tests\ActionTestCase;
 
-class PasswordResetActionTest extends ActionTestCase
+class PasswordResetActionTest extends UserActionTestCase
 {
     const NEW_PASSWORD = 'ILIKETOMOVEIT';
 

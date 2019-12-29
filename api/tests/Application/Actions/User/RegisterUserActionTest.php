@@ -9,9 +9,8 @@ use App\Application\Actions\ActionPayload;
 use App\Infrastructure\Persistence\User\UserRepository;
 use App\Infrastructure\Email\EmailService;
 use App\Infrastructure\Email\SimpleEmailMessage;
-use Tests\ActionTestCase;
 
-class RegisterUserActionTest extends ActionTestCase
+class RegisterUserActionTest extends UserActionTestCase
 {
 
     public function testRegisterUserAction()

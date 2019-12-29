@@ -9,9 +9,8 @@ use App\Application\Actions\ActionPayload;
 use App\Infrastructure\Email\EmailService;
 use App\Infrastructure\Email\SimpleEmailMessage;
 use App\Infrastructure\Persistence\User\UserRepository;
-use Tests\ActionTestCase;
 
-class RequestPasswordResetActionTest extends ActionTestCase
+class RequestPasswordResetActionTest extends UserActionTestCase
 {
 
     public function testRequestPasswordResetAction()

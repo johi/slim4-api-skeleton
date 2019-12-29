@@ -5,13 +5,12 @@ namespace Tests\Application\Actions\User;
 use App\Application\Actions\Action;
 use App\Application\Actions\ActionError;
 use App\Infrastructure\Persistence\User\UserRepository;
-use Tests\ActionTestCase;
 
-class LoginActionTest extends ActionTestCase
+class LoginActionTest extends UserActionTestCase
 {
     public function testLoginAction()
     {
-        $user = $this->getUser(ActionTestCase::UPDATED_TIMESTAMP);
+        $user = $this->getUser(UserActionTestCase::UPDATED_TIMESTAMP);
         $userRepositoryProphecy = $this->prophesize(UserRepository::class);
         $userRepositoryProphecy
             ->findUserOfEmail(self::USER_EMAIL)
@@ -77,7 +76,7 @@ class LoginActionTest extends ActionTestCase
     public function testLoginActionWrongPassword()
     {
         $wrongPassword = 'wrong';
-        $user = $this->getUser(ActionTestCase::UPDATED_TIMESTAMP);
+        $user = $this->getUser(UserActionTestCase::UPDATED_TIMESTAMP);
         $userRepositoryProphecy = $this->prophesize(UserRepository::class);
         $userRepositoryProphecy
             ->findUserOfEmail(self::USER_EMAIL)

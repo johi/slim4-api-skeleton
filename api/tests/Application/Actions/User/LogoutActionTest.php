@@ -6,9 +6,8 @@ use App\Application\Actions\Action;
 use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
 use App\Infrastructure\Persistence\User\UserRepository;
-use Tests\ActionTestCase;
 
-class LogoutActionTest extends ActionTestCase
+class LogoutActionTest extends UserActionTestCase
 {
 
     public function testLogoutAction()

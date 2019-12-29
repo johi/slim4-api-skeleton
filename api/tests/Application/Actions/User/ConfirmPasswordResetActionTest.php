@@ -7,9 +7,8 @@ use App\Application\Actions\Action;
 use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
 use App\Infrastructure\Persistence\User\UserRepository;
-use Tests\ActionTestCase;
 
-class ConfirmPasswordResetActionTest extends ActionTestCase
+class ConfirmPasswordResetActionTest extends UserActionTestCase
 {
 
     public function testConfirmPasswordResetAction()

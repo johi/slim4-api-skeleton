@@ -7,9 +7,8 @@ use App\Application\Actions\Action;
 use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
 use App\Infrastructure\Persistence\User\UserRepository;
-use Tests\ActionTestCase;
 
-class ConfirmUserActivationActionTest extends ActionTestCase
+class ConfirmUserActivationActionTest extends UserActionTestCase
 {
 
     public function testConfirmUserActivationAction()
@@ -108,7 +107,7 @@ class ConfirmUserActivationActionTest extends ActionTestCase
 
     public function testConfirmUserActivationActionAlreadyVerified()
     {
-        $user = $this->getUser(ActionTestCase::UPDATED_TIMESTAMP);
+        $user = $this->getUser(UserActionTestCase::UPDATED_TIMESTAMP);
         $userActivation = $this->getUserActivation();
         $userRepositoryProphecy = $this->prophesize(UserRepository::class);
         $userRepositoryProphecy

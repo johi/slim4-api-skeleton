@@ -7,10 +7,9 @@ use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
 use App\Domain\Exception\DomainRecordNotFoundException;
 use App\Infrastructure\Persistence\User\UserRepository;
-use Tests\ActionTestCase;
 
 
-class ViewUserActionTest extends ActionTestCase
+class ViewUserActionTest extends UserActionTestCase
 {
 
     public function testViewUserAction()
