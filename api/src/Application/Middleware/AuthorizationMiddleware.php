@@ -42,7 +42,6 @@ class AuthorizationMiddleware
         if (!$this->userRepository->verifyJwtToken($jwt[0], $userUuid)) {
             throw new HttpUnauthorizedException($request, 'The provided token is invalid');
         }
-        $this->logger->debug('Leaving AuthorizationMiddleware for user: ' . $userUuid . ' requesting: ' . $request->getUri());
         return $response;
     }
 }

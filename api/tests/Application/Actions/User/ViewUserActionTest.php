@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Tests\Application\Actions\User;
 
+use App\Application\Actions\Action;
 use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
 use App\Domain\Exception\DomainRecordNotFoundException;
@@ -25,7 +26,7 @@ class ViewUserActionTest extends UserActionTestCase
 
         //EXECUTION
         $payload = $this->makeRequest('GET', '/users/' . self::UUID_UNDER_TEST);
-        $expectedPayload = new ActionPayload(200, $user);
+        $expectedPayload = new ActionPayload(Action::HTTP_OK, $user);
         $serializedPayload = json_encode($expectedPayload, JSON_PRETTY_PRINT);
         $this->assertEquals($serializedPayload, $payload);
     }
@@ -47,7 +48,7 @@ class ViewUserActionTest extends UserActionTestCase
             'Domain record not found'
         );
         $serializedPayload = json_encode(
-            new ActionPayload(404, null, $expectedError),
+            new ActionPayload(Action::HTTP_NOT_FOUND, null, $expectedError),
             JSON_PRETTY_PRINT
         );
         $this->assertEquals($serializedPayload, $payload);

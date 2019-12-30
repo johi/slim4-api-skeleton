@@ -23,13 +23,14 @@ class LogoutActionTest extends UserActionTestCase
             ->invalidateUserLogins($user)
             ->shouldBeCalledOnce();
         $this->container->set(UserRepository::class, $userRepositoryProphecy->reveal());
-
-        $payload = $this->makeRequest('GET', '/users/logout');
+        $responseCode = 0;
+        $payload = $this->makeRequest('GET', '/users/logout', [], $responseCode);
         $serializedPayload = json_encode(
             new ActionPayload(Action::HTTP_OK, ['success' => 'ok']),
             JSON_PRETTY_PRINT
         );
         $this->assertEquals($serializedPayload, $payload);
+        $this->assertEquals(Action::HTTP_OK, $responseCode);
     }
 
     public function testLogoutActionUserNotFound()

@@ -43,7 +43,7 @@ class RequestPasswordResetActionTest extends UserActionTestCase
             'email' => self::USER_EMAIL
         ]);
         $serializedPayload = json_encode(
-            new ActionPayload(200, ['success' => 'ok', 'message' => 'email sent']),
+            new ActionPayload(Action::HTTP_OK, ['success' => 'ok', 'message' => 'email sent']),
             JSON_PRETTY_PRINT
         );
         $this->assertEquals($serializedPayload, $payload);

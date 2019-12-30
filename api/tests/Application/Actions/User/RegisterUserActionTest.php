@@ -49,7 +49,7 @@ class RegisterUserActionTest extends UserActionTestCase
             'password' => self::USER_PASSWORD,
             'password_confirmation' => self::USER_PASSWORD
         ]);
-        $serializedPayload = json_encode(new ActionPayload(201, $user), JSON_PRETTY_PRINT);
+        $serializedPayload = json_encode(new ActionPayload(Action::HTTP_CREATED, $user), JSON_PRETTY_PRINT);
         $this->assertEquals($serializedPayload, $payload);
     }
 

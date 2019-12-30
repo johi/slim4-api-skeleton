@@ -34,15 +34,16 @@ class PasswordResetActionTest extends UserActionTestCase
             ->willReturn($user)
             ->shouldBeCalledOnce();
         $this->container->set(UserRepository::class, $userRepositoryProphecy->reveal());
-
+        $responseCode = 0;
         $payload = $this->makeRequest('PUT', '/users/password', [
             'uuid' => self::UUID_UNDER_TEST,
             'token' => $token,
             'password' => self::NEW_PASSWORD,
             'password_confirmation' => self::NEW_PASSWORD
-        ]);
+        ], $responseCode);
         $payloadDecoded = json_decode($payload, true);
         $this->assertEquals(self::UUID_UNDER_TEST, $payloadDecoded['uuid']);
+        $this->assertEquals(Action::HTTP_OK, $responseCode);
     }
 
     public function testPasswordResetActionPasswordResetNotFound()

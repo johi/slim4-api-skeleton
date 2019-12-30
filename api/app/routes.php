@@ -12,8 +12,9 @@ use App\Application\Actions\User\RequestUserActivationAction;
 use App\Application\Actions\User\ViewUserAction;
 use App\Application\Middleware\AuthorizationMiddleware;
 use App\Infrastructure\Persistence\User\UserRepository;
-use Application\Actions\Subscription\CreateSubscriptionsAction;
-use Application\Actions\Subscription\ListSubscriptionsTopics;
+use App\Application\Actions\Subscription\ConfirmCreateSubscriptionsAction;
+use App\Application\Actions\Subscription\CreateSubscriptionsAction;
+use App\Application\Actions\Subscription\ListSubscriptionTopicsAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -45,9 +46,9 @@ return function (App $app) {
     })->add(new AuthorizationMiddleware($container->get(LoggerInterface::class), $container->get(UserRepository::class)));
 
     $app->group('/subscriptions', function (Group $group) use ($container) {
-       $group->get('/topics', ListSubscriptionsTopics::class);
+       $group->get('/topics', ListSubscriptionTopicsAction::class);
        $group->post('/', CreateSubscriptionsAction::class); //->create user if neccesary and corresponding subscriptions, send email confirming user and subscriptions, -> update
-       $group->get('/confirm/{token}', ConfirmCreateSubscriptions::class);
+       $group->get('/confirm/{token}', ConfirmCreateSubscriptionsAction::class);
        // $group->delete('/', RemoveSubscriptionsAction::class);
        // $group->get('/remove/{token}', ConfirmRemoveSubscriptionsAction::class);
     });

@@ -24,14 +24,15 @@ class LoginActionTest extends UserActionTestCase
             ->login($user)
             ->shouldBeCalledOnce();
         $this->container->set(UserRepository::class, $userRepositoryProphecy->reveal());
-
+        $responseCode = 0;
         $payload = $this->makeRequest('POST', '/users/login', [
             'email' => self::USER_EMAIL,
             'password' => self::USER_PASSWORD
-        ]);
+        ], $responseCode);
         $payloadDecoded = json_decode($payload, true);
         $this->assertIsArray($payloadDecoded);
         $this->assertIsString($payloadDecoded['jwt']);
+        $this->assertEquals(Action::HTTP_OK, $responseCode);
     }
 
     public function testLoginActionUserNotFound()

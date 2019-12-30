@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Application\Actions\Subscription;
+namespace App\Application\Actions\Subscription;
 
 use App\Application\Actions\Action;
 use App\Infrastructure\Persistence\Subscription\SubscriptionRepository;
