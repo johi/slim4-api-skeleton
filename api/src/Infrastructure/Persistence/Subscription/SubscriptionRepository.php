@@ -30,19 +30,17 @@ interface SubscriptionRepository
     /**
      * @param SubscriptionTopic $subscriptionTopic
      * @param string $userUuid
-     * @param bool $is_confirmed
      * @param bool $is_active
      * @return Subscription
      */
-    public function createSubscription(SubscriptionTopic $subscriptionTopic, string $userUuid, bool $is_confirmed, bool $is_active): Subscription;
+    public function createSubscription(SubscriptionTopic $subscriptionTopic, string $userUuid, bool $is_active): Subscription;
 
     /**
      * @param SubscriptionTopic $subscriptionTopic
      * @param string $userUuid
-     * @param bool $is_confirmed
      * @param bool $is_active
      * @return Subscription
      */
-    public function updateSubscription(SubscriptionTopic $subscriptionTopic, string $userUuid, bool $is_confirmed, bool $is_active): Subscription;
+    public function updateSubscription(SubscriptionTopic $subscriptionTopic, string $userUuid, bool $is_active): Subscription;
 
 }

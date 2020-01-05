@@ -38,7 +38,6 @@ class CreateSubscriptionsTable extends AbstractMigration
         ])
             ->addColumn('user_uuid', 'uuid', ['null' => false])
             ->addColumn('subscription_topic_uuid', 'uuid', ['null' => false])
-            ->addColumn('is_confirmed', 'boolean', ['default' => false])
             ->addColumn('is_active', 'boolean', ['default' => true])
             ->addTimestampsWithTimezone()
             ->create();

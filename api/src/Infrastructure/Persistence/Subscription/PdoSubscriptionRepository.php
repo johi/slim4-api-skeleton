@@ -87,18 +87,17 @@ class PdoSubscriptionRepository implements SubscriptionRepository
     /**
      * {@inheritdoc}
      */
-    public function createSubscription(SubscriptionTopic $subscriptionTopic, string $userUuid, bool $isConfirmed, bool $isActive): Subscription
+    public function createSubscription(SubscriptionTopic $subscriptionTopic, string $userUuid, bool $isActive): Subscription
     {
         if (is_null($this->findSubscriptionOfUserUuidAndSubscriptionTopicUuid($userUuid, $subscriptionTopic->getUuid()))) {
             try {
                 $uuid = $this->pdoDatabaseService->fetchUuid();
-                $query = "insert into subscriptions (uuid, user_uuid, subscription_topic_uuid, is_confirmed, is_active) values (:uuid, :userUuid, :subscriptionTopicUuid, :isConfirmed, :isActive)";
+                $query = "insert into subscriptions (uuid, user_uuid, subscription_topic_uuid, is_active) values (:uuid, :userUuid, :subscriptionTopicUuid, :isActive)";
                 $statement = $this->pdoDatabaseConnection->prepare($query);
                 $statement->execute([
                     ':uuid' => $uuid,
                     ':userUuid' => $userUuid,
                     ':subscriptionTopicUuid' => $subscriptionTopic->getUuid(),
-                    ':isConfirmed' => ($isConfirmed) ? 't' : 'f',
                     ':isActive' => ($isActive) ? 't' : 'f'
                 ]);
                 return $this->findSubscriptionOfUuid($uuid);
@@ -114,17 +113,16 @@ class PdoSubscriptionRepository implements SubscriptionRepository
     /**
      * {@inheritdoc}
      */
-    public function updateSubscription(SubscriptionTopic $subscriptionTopic, string $userUuid, bool $isConfirmed, bool $isActive): Subscription
+    public function updateSubscription(SubscriptionTopic $subscriptionTopic, string $userUuid, bool $isActive): Subscription
     {
         $subscription = $this->findSubscriptionOfUserUuidAndSubscriptionTopicUuid($userUuid, $subscriptionTopic->getUuid());
         if (!is_null($subscription)) {
             try {
                 $uuid = $subscription->getUuid();
-                $query = "update subscriptions set is_confirmed = :is_confirmed, is_active = :is_active where uuid = :uuid";
+                $query = "update subscriptions set is_active = :is_active where uuid = :uuid";
                 $statement = $this->pdoDatabaseConnection->prepare($query);
                 $statement->execute([
                     ':uuid' => $uuid,
-                    ':is_confirmed' => ($isConfirmed) ? 't' : 'f',
                     ':is_active' => ($isActive) ? 't' : 'f'
                 ]);
                 return $this->findSubscriptionOfUuid($uuid);
@@ -161,7 +159,6 @@ class PdoSubscriptionRepository implements SubscriptionRepository
             $result['uuid'],
             $result['user_uuid'],
             $result['subscription_topic_uuid'],
-            $result['is_confirmed'],
             $result['is_active'],
             $result['created_at'],
             $result['updated_at']

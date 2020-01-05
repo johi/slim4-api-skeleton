@@ -25,11 +25,6 @@ class Subscription implements JsonSerializable
     /**
      * @var bool
      */
-    private $isConfirmed;
-
-    /**
-     * @var bool
-     */
     private $isActive;
 
     /**
@@ -42,12 +37,11 @@ class Subscription implements JsonSerializable
      */
     private $updated;
 
-    public function __construct(string $uuid, string $userUuid, string $subscriptionTopicUuid, bool $isConfirmed, bool $isActive, string $created, ?string $updated)
+    public function __construct(string $uuid, string $userUuid, string $subscriptionTopicUuid, bool $isActive, string $created, ?string $updated)
     {
         $this->uuid = $uuid;
         $this->userUuid = $userUuid;
         $this->subscriptionTopicUuid = $subscriptionTopicUuid;
-        $this->isConfirmed = $isConfirmed;
         $this->isActive = $isActive;
         $this->created = $created;
         $this->updated = $updated;
@@ -80,14 +74,6 @@ class Subscription implements JsonSerializable
     /**
      * @return bool
      */
-    public function isConfirmed(): bool
-    {
-        return $this->isConfirmed;
-    }
-
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return $this->isActive;
@@ -102,7 +88,6 @@ class Subscription implements JsonSerializable
             'uuid' => $this->uuid,
             'userUuid' => $this->userUuid,
             'subscriptionTopicUuid' => $this->subscriptionTopicUuid,
-            'isConfirmed' => $this->isConfirmed,
             'isActive' => $this->isActive,
             'created' => $this->created,
             'updated' => $this->updated

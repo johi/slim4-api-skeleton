@@ -16,7 +16,6 @@ class BaseSubscriptionSeeder extends AbstractSeed
     const DEFAULT_UPDATED_AT = '2019-10-05 08:00:00+00';
     const DEFAULT_SUBSCRIBER_UUID = '10000000-0000-0000-0000-000000000000';
     const DEFAULT_USER_UUID = '10000000-0000-0000-0000-000000000000';
-    const DEFAULT_SUBSCRIBER_IS_CONFIRMED = true;
     const DEFAULT_SUBSCRIBER_IS_ACTIVE = true;
 
     private static $subscriptionTopicsTable;
@@ -63,7 +62,6 @@ class BaseSubscriptionSeeder extends AbstractSeed
             'uuid' => $overrides['uuid'] ?? self::DEFAULT_SUBSCRIBER_UUID,
             'user_uuid' => $overrides['user_uuid'] ?? self::DEFAULT_USER_UUID,
             'subscription_topic_uuid' => $overrides['subscription_topic_uuid'] ?? self::DEFAULT_SUBSCRIPTION_TOPIC_UUID,
-            'is_confirmed' => $overrides['is_confirmed'] ?? self::DEFAULT_SUBSCRIBER_IS_CONFIRMED,
             'is_active' => $overrides['is_active'] ?? self::DEFAULT_SUBSCRIBER_IS_ACTIVE,
             'created_at' => $overrides['created_at'] ?? self::DEFAULT_CREATED_AT,
             'updated_at' => $overrides['updated_at'] ?? self::DEFAULT_UPDATED_AT
@@ -75,7 +73,6 @@ class BaseSubscriptionSeeder extends AbstractSeed
             $subscriberArray['uuid'],
             $subscriberArray['user_uuid'],
             $subscriberArray['subscription_topic_uuid'],
-            $subscriberArray['is_confirmed'],
             $subscriberArray['is_active'],
             $subscriberArray['created_at'],
             $subscriberArray['updated_at']

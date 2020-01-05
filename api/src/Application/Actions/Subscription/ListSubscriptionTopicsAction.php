@@ -15,10 +15,7 @@ class ListSubscriptionTopicsAction extends SubscriptionAction
      */
     protected function action(): Response
     {
-        $this->logger->debug(
-            'WTF'
-        );
-        $subscriptionTopics = call_user_func(new ListSubscriptionTopicsQuery($this->logger, $this->userRepository, $this->subscriptionRepository), []);
+        $subscriptionTopics = call_user_func(new ListSubscriptionTopicsQuery($this->logger, $this->subscriptionRepository), []);
         return $this->respondWithData($subscriptionTopics, Action::HTTP_OK);
     }
 }
