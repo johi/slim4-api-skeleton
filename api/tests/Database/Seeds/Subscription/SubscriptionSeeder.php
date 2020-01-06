@@ -1,13 +1,12 @@
 <?php
 declare(strict_types=1);
 
-// namespace Tests\Database\Seeds\User;
-
 use App\Domain\Subscription\SubscriptionTopic;
 use App\Domain\Subscription\Subscription;
+use App\Domain\User\User;
 use Phinx\Seed\AbstractSeed;
 
-class BaseSubscriptionSeeder extends AbstractSeed
+class SubscriptionSeeder extends AbstractSeed
 {
     const DEFAULT_SUBSCRIPTION_TOPIC_UUID = '00000000-0000-0000-0000-000000000000';
     const DEFAULT_SUBSCRIPTION_TOPIC_NAME = 'Weekly Newsletter';
@@ -20,6 +19,7 @@ class BaseSubscriptionSeeder extends AbstractSeed
 
     private static $subscriptionTopicsTable;
     private static $subscriptionsTable;
+    private static $usersTable;
 
     /**
      * Run Method.
@@ -33,6 +33,7 @@ class BaseSubscriptionSeeder extends AbstractSeed
     {
         self::$subscriptionTopicsTable = $this->table('subscription_topics');
         self::$subscriptionsTable = $this->table('subscriptions');
+        self::$usersTable = $this->table('users');
     }
 
     public static function addSubscriptionTopic(array $overrides = []): SubscriptionTopic

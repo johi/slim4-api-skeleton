@@ -9,7 +9,7 @@ use App\Domain\User\UserActivation;
 use App\Domain\User\UserLogin;
 use Phinx\Seed\AbstractSeed;
 
-class BaseUserSeeder extends AbstractSeed
+class UserSeeder extends AbstractSeed
 {
     const DEFAULT_USER_UUID = '00000000-0000-0000-0000-000000000000';
     const DEFAULT_USER_NAME = 'John Doe';

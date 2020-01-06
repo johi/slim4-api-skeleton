@@ -5,7 +5,7 @@ namespace Tests\Infrastructure\Persistence\User;
 
 use App\Infrastructure\Persistence\User\PdoUserRepository;
 use App\Infrastructure\Token\SimpleTokenService;
-use BaseUserSeeder;
+use UserSeeder;
 use Tests\DatabaseTestCase;
 
 class PdoUserRepositoryTest extends DatabaseTestCase
@@ -15,7 +15,7 @@ class PdoUserRepositoryTest extends DatabaseTestCase
 
     protected static $pdoUserRepository;
 
-    protected static $seedSubPath = '/User';
+    protected static $seeds = ['User'];
 
     public static function setUpBeforeClass()
     {
@@ -46,8 +46,8 @@ class PdoUserRepositoryTest extends DatabaseTestCase
 
     public function testFindUserOfUuid()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
         $this->assertEquals(
             $user,
             self::$pdoUserRepository->findUserOfUuid(
@@ -59,8 +59,8 @@ class PdoUserRepositoryTest extends DatabaseTestCase
 
     public function testFindUserOfEmail()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
         $this->assertEquals(
             $user,
             self::$pdoUserRepository->findUserOfEmail(
@@ -80,64 +80,64 @@ class PdoUserRepositoryTest extends DatabaseTestCase
 
     public function testActivateUser()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser(['email_verified' => null]);
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser(['email_verified' => null]);
         $user = self::$pdoUserRepository->activateUser($user);
         $this->assertNotNull($user->getVerified());
     }
 
     public function testVerifyPassword()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
-        $this->assertTrue(self::$pdoUserRepository->verifyPassword($user->getEmail(), BaseUserSeeder::DEFAULT_USER_PASSWORD));
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
+        $this->assertTrue(self::$pdoUserRepository->verifyPassword($user->getEmail(), UserSeeder::DEFAULT_USER_PASSWORD));
         $this->assertFalse(self::$pdoUserRepository->verifyPassword($user->getEmail(), 'something'));
     }
 
     public function testUpdatePassword()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
         $newPassword = 'somethingelse';
         self::$pdoUserRepository->updatePassword($user, $newPassword);
         $this->assertTrue(self::$pdoUserRepository->verifyPassword($user->getEmail(), $newPassword));
-        $this->assertFalse(self::$pdoUserRepository->verifyPassword($user->getEmail(), BaseUserSeeder::DEFAULT_USER_PASSWORD));
+        $this->assertFalse(self::$pdoUserRepository->verifyPassword($user->getEmail(), UserSeeder::DEFAULT_USER_PASSWORD));
     }
 
     public function testFindUserActivationOfUuid()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser(['email_verified' => null]);
-        $userActivation = BaseUserSeeder::addUserActivation();
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser(['email_verified' => null]);
+        $userActivation = UserSeeder::addUserActivation();
         $this->assertInstanceOf('\App\Domain\User\UserActivation', self::$pdoUserRepository->findUserActivationOfUuid($userActivation->getUuid()));
         $this->assertNull(self::$pdoUserRepository->findUserActivationOfUuid(self::NON_EXISTING_UUID));
     }
 
     public function testFindUserActivationOfToken()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser(['email_verified' => null]);
-        $userActivation = BaseUserSeeder::addUserActivation();
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser(['email_verified' => null]);
+        $userActivation = UserSeeder::addUserActivation();
         $this->assertInstanceOf('\App\Domain\User\UserActivation', self::$pdoUserRepository->findUserActivationOfToken($userActivation->getToken()));
         $this->assertNull(self::$pdoUserRepository->findUserActivationOfToken('123'));
     }
 
     public function testUserActivationIsValid()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser(['email_verified' => null]);
-        $userActivation = BaseUserSeeder::addUserActivation();
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser(['email_verified' => null]);
+        $userActivation = UserSeeder::addUserActivation();
         $userActivation = self::$pdoUserRepository->findUserActivationOfToken($userActivation->getToken());
         $this->assertTrue(self::$pdoUserRepository->userActivationIsValid($userActivation));
         $otherUserActivationsUuid = '10000000-0000-0000-0000-000000000001';
         $otherUsersUuid = '00000000-0000-0000-0000-000000000001';
-        $user = BaseUserSeeder::addUser([
+        $user = UserSeeder::addUser([
             'uuid' => $otherUsersUuid,
             'email' => 'test2@example.com',
             'email_verified' => null
         ]);
         $token = $userActivation->getToken() . 'A';
-        $userActivation = BaseUserSeeder::addUserActivation([
+        $userActivation = UserSeeder::addUserActivation([
             'uuid' => $otherUserActivationsUuid,
             'user_uuid' => $otherUsersUuid,
             'token' => $token,
@@ -150,8 +150,8 @@ class PdoUserRepositoryTest extends DatabaseTestCase
 
     public function testCreateUserActivation()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser(['email_verified' => null]);
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser(['email_verified' => null]);
         $userActivation = self::$pdoUserRepository->createUserActivation($user);
         $this->assertInstanceOf('\App\Domain\User\UserActivation', $userActivation);
         $this->assertTrue(self::$pdoUserRepository->userActivationIsValid($userActivation));
@@ -164,9 +164,9 @@ class PdoUserRepositoryTest extends DatabaseTestCase
 
     public function testFindUserLoginOfToken()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
-        $userLogin = BaseUserSeeder::addUserLogin();
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
+        $userLogin = UserSeeder::addUserLogin();
         $this->assertEquals(
             $userLogin,
             self::$pdoUserRepository->findUserLoginOfToken($userLogin->getToken())
@@ -176,8 +176,8 @@ class PdoUserRepositoryTest extends DatabaseTestCase
 
     public function testCreateUserLogin()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
         $userLogin = self::$pdoUserRepository->createUserLogin($user, SimpleTokenService::generateToken());
         $this->assertInstanceOf('\App\Domain\User\UserLogin', $userLogin);
         $this->assertTrue(self::$pdoUserRepository->userLoginIsValid($userLogin));
@@ -190,28 +190,18 @@ class PdoUserRepositoryTest extends DatabaseTestCase
 
     public function testLogin()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
         $token = self::$pdoUserRepository->login($user);
         $this->assertIsString($token);
         $this->assertTrue(self::$pdoUserRepository->verifyJwtToken($token, $user->getUuid()));
     }
 
-//    /**
-//     * @expectedException \App\Domain\Exception\DomainRecordRequestException
-//     */
-//    public function testLoginThrowsDomainRecordRequestException()
-//    {
-//        self::$manager->seed('test', 'BaseUserSeeder');
-//        $user = BaseUserSeeder::addUser();
-//        $token = self::$pdoUserRepository->login($user, 'somethingelse');
-//    }
-
     public function testFindPasswordResetOfToken()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
-        $passwordReset = BaseUserSeeder::addPasswordReset();
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
+        $passwordReset = UserSeeder::addPasswordReset();
         $this->assertInstanceOf('\App\Domain\User\PasswordReset', self::$pdoUserRepository->findPasswordResetOfToken($passwordReset->getToken()));
         $this->assertEquals(
             $passwordReset,
@@ -222,8 +212,8 @@ class PdoUserRepositoryTest extends DatabaseTestCase
 
     public function testCreatePasswordReset()
     {
-        self::$manager->seed('test', 'BaseUserSeeder');
-        $user = BaseUserSeeder::addUser();
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
         $passwordReset = self::$pdoUserRepository->createPasswordReset($user);
         $this->assertInstanceOf('\App\Domain\User\PasswordReset', $passwordReset);
         $this->assertTrue(self::$pdoUserRepository->passwordResetIsValid($passwordReset));

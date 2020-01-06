@@ -8,6 +8,7 @@ use App\Domain\Exception\DomainRecordNotFoundException;
 use App\Domain\Exception\DomainServiceException;
 use App\Domain\Subscription\Subscription;
 use App\Domain\Subscription\SubscriptionTopic;
+use App\Domain\User\User;
 use App\Infrastructure\Database\PdoDatabaseService;
 use PDO;
 use PDOException;
@@ -44,6 +45,27 @@ class PdoSubscriptionRepository implements SubscriptionRepository
         return $subscriptions;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function findSubscriptionTopicOfUuid(string $uuid): ?SubscriptionTopic
+    {
+        $result = null;
+        try {
+            $statement = $this->pdoDatabaseConnection->prepare("select * from subscription_topics where uuid = :uuid");
+            $statement->execute([
+                ':uuid' => $uuid
+            ]);
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            throw new DomainServiceException(sprintf('SQL query failed for findSubscriptionTopicOfUuid with uuid: %s', $uuid));
+        }
+        if (isset($result['uuid'])) {
+            return $this->getSubscriptionTopicFromRow($result);
+        }
+        return null;
+    }
+
     public function findSubscriptionOfUuid(string $uuid): ?Subscription
     {
         $result = null;
@@ -65,18 +87,18 @@ class PdoSubscriptionRepository implements SubscriptionRepository
     /**
      * {@inheritdoc}
      */
-    public function findSubscriptionOfUserUuidAndSubscriptionTopicUuid(string $userUuid, string $subscriptionTopicUuid): ?Subscription
+    public function findSubscriptionOfSubscriptionTopicAndUser(SubscriptionTopic $subscriptionTopic, User $user): ?Subscription
     {
         $result = null;
         try {
             $statement = $this->pdoDatabaseConnection->prepare("select * from subscriptions where user_uuid = :userUuid and subscription_topic_uuid = :subscriptionTopicUuid");
             $statement->execute([
-                ':userUuid' => $userUuid,
-                ':subscriptionTopicUuid' => $subscriptionTopicUuid
+                ':userUuid' => $user->getUuid(),
+                ':subscriptionTopicUuid' => $subscriptionTopic->getUuid()
             ]);
             $result = $statement->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new DomainServiceException(sprintf('SQL query failed for findSubscriptionOfUserUuidAndSubscriptionTopicUuid with user_uuid: %s and subscription_topic_uuid: %s', $userUuid, $subscriptionTopicUuid));
+            throw new DomainServiceException(sprintf('SQL query failed for findSubscriptionOfUserUuidAndSubscriptionTopicUuid with user_uuid: %s and subscription_topic_uuid: %s', $user->getUuid(), $subscriptionTopic->getUuid()));
         }
         if (isset($result['uuid'])) {
             return $this->getSubscriptionFromRow($result);
@@ -84,38 +106,38 @@ class PdoSubscriptionRepository implements SubscriptionRepository
         return null;
     }
 
+
     /**
      * {@inheritdoc}
      */
-    public function createSubscription(SubscriptionTopic $subscriptionTopic, string $userUuid, bool $isActive): Subscription
+    public function createSubscription(SubscriptionTopic $subscriptionTopic, User $user, bool $isActive): Subscription
     {
-        if (is_null($this->findSubscriptionOfUserUuidAndSubscriptionTopicUuid($userUuid, $subscriptionTopic->getUuid()))) {
+        if (is_null($this->findSubscriptionOfSubscriptionTopicAndUser($subscriptionTopic, $user))) {
             try {
                 $uuid = $this->pdoDatabaseService->fetchUuid();
                 $query = "insert into subscriptions (uuid, user_uuid, subscription_topic_uuid, is_active) values (:uuid, :userUuid, :subscriptionTopicUuid, :isActive)";
                 $statement = $this->pdoDatabaseConnection->prepare($query);
                 $statement->execute([
                     ':uuid' => $uuid,
-                    ':userUuid' => $userUuid,
+                    ':userUuid' => $user->getUuid(),
                     ':subscriptionTopicUuid' => $subscriptionTopic->getUuid(),
                     ':isActive' => ($isActive) ? 't' : 'f'
                 ]);
                 return $this->findSubscriptionOfUuid($uuid);
             } catch (PDOException $e) {
-                var_dump($e->getMessage());
-                throw new DomainServiceException(sprintf('SQL query failed for createSubscription user_uuid: %s and subscription_topic_uuid: %s', $userUuid, $subscriptionTopic->getUuid()));
+                throw new DomainServiceException(sprintf('SQL query failed for createSubscription user_uuid: %s and subscription_topic_uuid: %s', $user->getUuid(), $subscriptionTopic->getUuid()));
             }
         } else {
-            throw new DomainRecordDuplicateException(sprintf('A subscriber for user_uuid: %s and subscription_topic_uuid: %s already exists', $userUuid, $subscriptionTopic->getUuid()));
+            throw new DomainRecordDuplicateException(sprintf('A subscriber for user_uuid: %s and subscription_topic_uuid: %s already exists', $user->getUuid(), $subscriptionTopic->getUuid()));
         }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function updateSubscription(SubscriptionTopic $subscriptionTopic, string $userUuid, bool $isActive): Subscription
+    public function updateSubscription(SubscriptionTopic $subscriptionTopic, User $user, bool $isActive): Subscription
     {
-        $subscription = $this->findSubscriptionOfUserUuidAndSubscriptionTopicUuid($userUuid, $subscriptionTopic->getUuid());
+        $subscription = $this->findSubscriptionOfSubscriptionTopicAndUser($subscriptionTopic, $user);
         if (!is_null($subscription)) {
             try {
                 $uuid = $subscription->getUuid();
@@ -127,10 +149,10 @@ class PdoSubscriptionRepository implements SubscriptionRepository
                 ]);
                 return $this->findSubscriptionOfUuid($uuid);
             } catch (PDOException $e) {
-                throw new DomainServiceException(sprintf('SQL query failed for updateSubscription user_uuid: %s and subscription_topic_uuid: %s', $userUuid, $subscriptionTopic->getUuid()));
+                throw new DomainServiceException(sprintf('SQL query failed for updateSubscription user_uuid: %s and subscription_topic_uuid: %s', $user->getUuid(), $subscriptionTopic->getUuid()));
             }
         } else {
-            throw new DomainRecordNotFoundException(sprintf('A subscriber for user_uuid: %s and subscription_topic_uuid: %s could not be found', $userUuid, $subscriptionTopic->getUuid()));
+            throw new DomainRecordNotFoundException(sprintf('A subscriber for user_uuid: %s and subscription_topic_uuid: %s could not be found', $user->getUuid(), $subscriptionTopic->getUuid()));
         }
     }
 
