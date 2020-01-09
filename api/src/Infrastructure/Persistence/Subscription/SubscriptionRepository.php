@@ -50,4 +50,10 @@ interface SubscriptionRepository
      */
     public function updateSubscription(SubscriptionTopic $subscriptionTopic, User $user, bool $is_active): Subscription;
 
+    /**
+     * @param User $user
+     * @param array $subscriptionTopicUuidActivePair
+     * @return array
+     */
+    public function bulkSaveSubscriptions(User $user, array $subscriptionTopicUuidActivePair): array;
 }

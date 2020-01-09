@@ -5,6 +5,7 @@ namespace App\Infrastructure\Database;
 use App\Application\Configuration\AppConfiguration;
 use PDO;
 use PDOException;
+use phpDocumentor\Reflection\Types\Null_;
 
 class PdoDatabaseService implements DatabaseService
 {
@@ -90,5 +91,20 @@ class PdoDatabaseService implements DatabaseService
         $statement->execute();
         $row = $statement->fetch(PDO::FETCH_ASSOC);
         return $row['timestamp'];
+    }
+
+    public function startTransaction(): void
+    {
+        $this->connection->beginTransaction();
+    }
+
+    public function commitTransaction(): void
+    {
+        $this->connection->commit();
+    }
+
+    public function rollbackTransaction(): void
+    {
+        $this->connection->rollBack();
     }
 }

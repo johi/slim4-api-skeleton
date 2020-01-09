@@ -10,10 +10,6 @@ use Psr\Log\LoggerInterface;
 
 abstract class SubscriptionAction extends Action
 {
-    /**
-     * @var UserRepository
-     */
-    protected $userRepository;
 
     /**
      * @var SubscriptionRepository
@@ -21,13 +17,23 @@ abstract class SubscriptionAction extends Action
     protected $subscriptionRepository;
 
     /**
-     * @param LoggerInterface $logger
-     * @param UserRepository  $userRepository
+     * @var UserRepository
      */
-    public function __construct(LoggerInterface $logger, UserRepository $userRepository, SubscriptionRepository $subscriptionRepository)
+    protected $userRepository;
+
+    /**
+     * @param LoggerInterface $logger
+     * @param SubscriptionRepository $subscriptionRepository
+     * @param UserRepository $userRepository
+     */
+    public function __construct(
+        LoggerInterface $logger,
+        SubscriptionRepository $subscriptionRepository,
+        UserRepository $userRepository
+    )
     {
         parent::__construct($logger);
-        $this->userRepository = $userRepository;
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->userRepository = $userRepository;
     }
 }

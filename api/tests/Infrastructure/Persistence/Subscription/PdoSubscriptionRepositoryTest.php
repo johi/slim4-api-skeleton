@@ -136,4 +136,46 @@ class PdoUserRepositoryTest extends DatabaseTestCase
         $subscriptionTopic = SubscriptionSeeder::addSubscriptionTopic();
         $subscription = self::$pdoSubscriptionRepository->updateSubscription($subscriptionTopic, $user, true);
     }
+
+    public function testBulkSaveSubscriptions()
+    {
+        self::$manager->seed('test', 'SubscriptionSeeder');
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
+        $subscriptionTopic = SubscriptionSeeder::addSubscriptionTopic();
+        $subscription = self::$pdoSubscriptionRepository->bulkSaveSubscriptions($user, [
+            [
+                'uuid' => $subscriptionTopic->getUuid(),
+                'active' => false
+            ]
+        ])[0];
+        $this->assertEquals($subscriptionTopic->getUuid(), $subscription->getSubscriptionTopicUuid());
+        $this->assertFalse($subscription->isActive());
+        $subscriptionUuid = $subscription->getUuid();
+        $subscription = self::$pdoSubscriptionRepository->bulkSaveSubscriptions($user, [
+            [
+                'uuid' => $subscriptionTopic->getUuid(),
+                'active' => true
+            ]
+        ])[0];
+        $this->assertEquals($subscriptionUuid, $subscription->getUuid());
+        $this->assertTrue($subscription->isActive());
+    }
+
+    /**
+     * @expectedException \App\Domain\Exception\DomainRecordNotFoundException
+     */
+    public function testBulkSaveSubscriptionsThrowsDomainRecordNotFoundException()
+    {
+        self::$manager->seed('test', 'SubscriptionSeeder');
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
+        self::$pdoSubscriptionRepository->bulkSaveSubscriptions($user, [
+            [
+                'uuid' => self::NON_EXISTING_SUBSCRIPTION_UUID,
+                'active' => false
+            ]
+        ]);
+    }
+
 }

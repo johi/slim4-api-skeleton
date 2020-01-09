@@ -106,7 +106,6 @@ class PdoSubscriptionRepository implements SubscriptionRepository
         return null;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -154,6 +153,34 @@ class PdoSubscriptionRepository implements SubscriptionRepository
         } else {
             throw new DomainRecordNotFoundException(sprintf('A subscriber for user_uuid: %s and subscription_topic_uuid: %s could not be found', $user->getUuid(), $subscriptionTopic->getUuid()));
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function bulkSaveSubscriptions(User $user, array $subscriptionTopicUuidActivePair): array
+    {
+        $subscriptions = [];
+        $this->pdoDatabaseService->startTransaction();
+        try {
+            foreach ($subscriptionTopicUuidActivePair as $pair) {
+                $subscriptionTopic = $this->findSubscriptionTopicOfUuid($pair['uuid']);
+                if (is_null($subscriptionTopic)) {
+                    throw new DomainRecordNotFoundException(sprintf('SubscriptionTopic with uuid: %s could not be found for SaveSubscriptionCommand', $pair['uuid']));
+                }
+                $subscription = $this->findSubscriptionOfSubscriptionTopicAndUser($subscriptionTopic, $user);
+                if (!is_null($subscription)) {
+                    $subscriptions[] = $this->updateSubscription($subscriptionTopic, $user, $pair['active']);
+                } else {
+                    $subscriptions[] = $this->createSubscription($subscriptionTopic, $user, $pair['active']);
+                }
+            }
+        } catch (DomainRecordNotFoundException $exception) {
+            $this->pdoDatabaseService->rollbackTransaction();
+            throw new DomainRecordNotFoundException($exception->getMessage());
+        }
+        $this->pdoDatabaseService->commitTransaction();
+        return $subscriptions;
     }
 
     /**

@@ -18,7 +18,7 @@ class SaveSubscriptionsAction extends SubscriptionAction
         $data = $this->getPayload();
         //validate headers userUuid against provided data userUuid
         //json schema validation
-        $subscriptions = call_user_func(new SaveSubscriptionsCommand($this->logger, $this->userRepository, $this->subscriptionRepository), $data);
-        return $this->respondWithData(['success' => 'ok'], Action::HTTP_OK);
+        $subscriptions = call_user_func(new SaveSubscriptionsCommand($this->logger, $this->subscriptionRepository, $this->userRepository), $data);
+        return $this->respondWithData($subscriptions, Action::HTTP_OK);
     }
 }

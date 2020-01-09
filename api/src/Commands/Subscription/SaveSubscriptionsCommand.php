@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Commands\Subscription;
 
 use App\Commands\Command;
+use App\Domain\Exception\DomainRecordNotFoundException;
 use App\Infrastructure\Persistence\Subscription\SubscriptionRepository;
 use App\Infrastructure\Persistence\User\UserRepository;
 use Psr\Log\LoggerInterface;
@@ -11,38 +12,26 @@ use Psr\Log\LoggerInterface;
 class SaveSubscriptionsCommand extends Command
 {
     private $logger;
-    private $userRepository;
     private $subscriptionRepository;
+    private $userRepository;
 
     public function __construct(
         LoggerInterface $logger,
-        UserRepository $userRepository,
-        SubscriptionRepository $subscriptionRepository
+        SubscriptionRepository $subscriptionRepository,
+        UserRepository $userRepository
     )
     {
         $this->logger = $logger;
-        $this->userRepository = $userRepository;
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function run($data): array
     {
-        //input format is going to be a list
-        //userUuid => <uuid>
-        //subscriptions => [
-        // subscriptionUuid => <uuid>
-        // active => <active>
-        //]
-        //we got name, email, password and a set of subscription_topic_uuids
-        //1. look up user on email
-        $subscriptions = [];
-        $user = $this->userRepository->findUserOfEmail($data['email']);
-        //1.1 if not exists, create user, send confirmation email, add subscriptions
+        $user = $this->userRepository->findUserOfUuid($data['userUuid']);
         if (is_null($user)) {
-            $user = $this->userRepository->createUser($data['name'], $data['email'], $data['password']);
-        } else {
-            //1.2 if exists, look up subscriptions for user, if one or more exist, throw error, else create subscriptions
+            throw new DomainRecordNotFoundException(sprintf('A user with uuid: %s could not be found for SaveSubscriptionCommand', $data['userUuid']));
         }
-        //2 return subscriptions as array
+        return $this->subscriptionRepository->bulkSaveSubscriptions($user, $data['subscriptionTopics']);
     }
 }

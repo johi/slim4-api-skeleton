@@ -6,11 +6,10 @@ namespace Tests\Application\Actions\Subscription;
 use App\Application\Actions\Action;
 use App\Application\Actions\ActionPayload;
 use App\Infrastructure\Persistence\Subscription\SubscriptionRepository;
-use Tests\ActionTestCase;
 
-class ListSubscriptionTopicsActionTest extends ActionTestCase
+class ListSubscriptionTopicsActionTest extends SubscriptionActionTestCase
 {
-    public function testListSubscriptionTopicsTest()
+    public function testListSubscriptionTopicsActionTest()
     {
         $subscriptionRepositoryProphecy = $this->prophesize(SubscriptionRepository::class);
         $subscriptionRepositoryProphecy

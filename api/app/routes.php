@@ -46,7 +46,7 @@ return function (App $app) {
 
     $app->group('/subscriptions', function (Group $group) use ($container) {
         $group->get('/topics', ListSubscriptionTopicsAction::class);
-        $group->post('/', SaveSubscriptionsAction::class);
+        $group->post('', SaveSubscriptionsAction::class);
         // $group->get('/', ViewSubscriptionsAction::class);
     })->add(new AuthorizationMiddleware($container->get(LoggerInterface::class), $container->get(UserRepository::class)));
 };
