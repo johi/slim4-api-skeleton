@@ -38,11 +38,11 @@ class PdoSubscriptionRepository implements SubscriptionRepository
         } catch (PDOException $e) {
             throw new DomainServiceException(sprintf('SQL query failed for findAllSubscriptionTopics'));
         }
-        $subscriptions = [];
+        $subscriptionTopics = [];
         foreach ($result as $row) {
-            $subscriptions[] = $this->getSubscriptionTopicFromRow($row);
+            $subscriptionTopics[] = $this->getSubscriptionTopicFromRow($row);
         }
-        return $subscriptions;
+        return $subscriptionTopics;
     }
 
     /**
@@ -104,6 +104,28 @@ class PdoSubscriptionRepository implements SubscriptionRepository
             return $this->getSubscriptionFromRow($result);
         }
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findSubscriptionsOfUser(User $user): array
+    {
+        $result = null;
+        try {
+            $statement = $this->pdoDatabaseConnection->prepare("select * from subscriptions where user_uuid = :userUuid");
+            $statement->execute([
+                ':userUuid' => $user->getUuid()
+            ]);
+            $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            throw new DomainServiceException(sprintf('SQL query failed for findSubscriptionsOfUser for user_uuid: %s', $user->getUuid()));
+        }
+        $subscriptions = [];
+        foreach ($result as $row) {
+            $subscriptions[] = $this->getSubscriptionFromRow($row);
+        }
+        return $subscriptions;
     }
 
     /**

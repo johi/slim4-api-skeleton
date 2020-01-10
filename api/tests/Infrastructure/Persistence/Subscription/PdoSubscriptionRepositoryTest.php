@@ -89,6 +89,21 @@ class PdoUserRepositoryTest extends DatabaseTestCase
             self::$pdoSubscriptionRepository->findSubscriptionOfSubscriptionTopicAndUser($subscriptionTopic, $user));
     }
 
+    public function testFindSubscriptionsOfUser()
+    {
+        self::$manager->seed('test', 'SubscriptionSeeder');
+        self::$manager->seed('test', 'UserSeeder');
+        $user = UserSeeder::addUser();
+        $subscriptionTopic = SubscriptionSeeder::addSubscriptionTopic();
+        $subscriptions = self::$pdoSubscriptionRepository->findSubscriptionsOfUser($user);
+        $this->assertEquals([], $subscriptions);
+        $subscription = SubscriptionSeeder::addSubscription([
+           'user_uuid' => $user->getUuid()
+        ]);
+        $subscriptions = self::$pdoSubscriptionRepository->findSubscriptionsOfUser($user);
+        $this->assertEquals([$subscription], $subscriptions);
+    }
+
     public function testCreateSubscription()
     {
         self::$manager->seed('test', 'SubscriptionSeeder');

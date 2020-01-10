@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Application\Actions\Subscription\ViewSubscriptionsAction;
 use App\Application\Actions\User\ConfirmPasswordResetAction;
 use App\Application\Actions\User\ConfirmUserActivationAction;
 use App\Application\Actions\User\LoginAction;
@@ -47,6 +48,6 @@ return function (App $app) {
     $app->group('/subscriptions', function (Group $group) use ($container) {
         $group->get('/topics', ListSubscriptionTopicsAction::class);
         $group->post('', SaveSubscriptionsAction::class);
-        // $group->get('/', ViewSubscriptionsAction::class);
+        $group->get('/{uuid:[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}}', ViewSubscriptionsAction::class);
     })->add(new AuthorizationMiddleware($container->get(LoggerInterface::class), $container->get(UserRepository::class)));
 };

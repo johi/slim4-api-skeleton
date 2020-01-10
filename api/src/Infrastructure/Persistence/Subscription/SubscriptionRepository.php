@@ -35,6 +35,12 @@ interface SubscriptionRepository
     public function findSubscriptionOfSubscriptionTopicAndUser(SubscriptionTopic $subscriptionTopic, User $user): ?Subscription;
 
     /**
+     * @param User $user
+     * @return array
+     */
+    public function findSubscriptionsOfUser(User $user): array;
+
+    /**
      * @param SubscriptionTopic $subscriptionTopic
      * @param User $user
      * @param bool $is_active
