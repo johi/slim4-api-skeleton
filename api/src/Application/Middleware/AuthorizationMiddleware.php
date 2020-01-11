@@ -30,7 +30,6 @@ class AuthorizationMiddleware
 
     public function __invoke(Request $request, RequestHandler $handler): Response
     {
-        $response = $handler->handle($request);
         if (!isset($request->getHeader('authorization')[0])) {
             throw new HttpBadRequestException($request, 'Missing authorization header');
         }
@@ -40,8 +39,9 @@ class AuthorizationMiddleware
         }
         $userUuid = $request->getHeader('useruuid')[0];
         if (!$this->userRepository->verifyJwtToken($jwt[0], $userUuid)) {
+            $this->logger->info("JwtToken is invalid :-P");
             throw new HttpUnauthorizedException($request, 'The provided token is invalid');
         }
-        return $response;
+        return $handler->handle($request);
     }
 }
