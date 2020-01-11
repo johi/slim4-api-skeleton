@@ -162,7 +162,7 @@ class PdoSubscriptionRepository implements SubscriptionRepository
         if (!is_null($subscription)) {
             try {
                 $uuid = $subscription->getUuid();
-                $query = "update subscriptions set is_active = :is_active where uuid = :uuid";
+                $query = "update subscriptions set is_active = :is_active, updated_at=NOW() where uuid = :uuid";
                 $statement = $this->pdoDatabaseConnection->prepare($query);
                 $statement->execute([
                     ':uuid' => $uuid,
