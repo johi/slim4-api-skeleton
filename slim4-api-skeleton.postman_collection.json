@@ -1,0 +1,339 @@
+{
+	"info": {
+		"_postman_id": "6e586c2b-3c25-49b9-b25e-27e55fc9d197",
+		"name": "slim4-api-skeleton",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"John Doe\",\n\t\"email\": \"john.doe@example.com\",\n\t\"password\": \"example\",\n\t\"password_confirmation\": \"example\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/users/register",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "confirm user activation/email",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/activate/0b396e5bad3b3dbc9b8a6c7d4f2105bb",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"activate",
+						"0b396e5bad3b3dbc9b8a6c7d4f2105bb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "request password reset",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"john.doe@example.com\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/users/password",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "confirm password reset",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/password/9d5c71fd7dbc4a7faefcc6afe145c362",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"password",
+						"9d5c71fd7dbc4a7faefcc6afe145c362"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "password reset",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"token\": \"9d5c71fd7dbc4a7faefcc6afe145c362\",\n\t\"password\": \"newpass\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "request new user activation email",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"john.doe@example.com\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/users/activation",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"activation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"john.doe@example.com\",\n\t\"password\": \"example\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view user",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "useruuid",
+						"value": "7ebafedb-7a47-4890-a047-133ef941bc02",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1Nzg3NTQzNjksImp0aSI6IjVmOTBiNDc4MmIxZmQ1MmFjZjgxZTJlYTI1NTQ2ODA1IiwiaXNzIjoiYXBpIiwiZXhwIjoxNTc4ODQwNzY5LCJkYXRhIjp7InV1aWQiOiI3ZWJhZmVkYi03YTQ3LTQ4OTAtYTA0Ny0xMzNlZjk0MWJjMDIiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIn19.74U6V1-SuzVGgdmH-p74QrMrt2qQ5aI7UKeASvsZARGjiDAGOitGgNGHL4tLW1-w4kym_ALh_hKdf6-ER-I3Sg",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/7ebafedb-7a47-4890-a047-133ef941bc02",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"7ebafedb-7a47-4890-a047-133ef941bc02"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view subscription topics",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "useruuid",
+						"value": "7ebafedb-7a47-4890-a047-133ef941bc02",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1Nzg3NTQzNjksImp0aSI6IjVmOTBiNDc4MmIxZmQ1MmFjZjgxZTJlYTI1NTQ2ODA1IiwiaXNzIjoiYXBpIiwiZXhwIjoxNTc4ODQwNzY5LCJkYXRhIjp7InV1aWQiOiI3ZWJhZmVkYi03YTQ3LTQ4OTAtYTA0Ny0xMzNlZjk0MWJjMDIiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIn19.74U6V1-SuzVGgdmH-p74QrMrt2qQ5aI7UKeASvsZARGjiDAGOitGgNGHL4tLW1-w4kym_ALh_hKdf6-ER-I3Sg",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/subscriptions/topics",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"subscriptions",
+						"topics"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "save subscriptions",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "useruuid",
+						"value": "7ebafedb-7a47-4890-a047-133ef941bc02",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1Nzg3NTQzNjksImp0aSI6IjVmOTBiNDc4MmIxZmQ1MmFjZjgxZTJlYTI1NTQ2ODA1IiwiaXNzIjoiYXBpIiwiZXhwIjoxNTc4ODQwNzY5LCJkYXRhIjp7InV1aWQiOiI3ZWJhZmVkYi03YTQ3LTQ4OTAtYTA0Ny0xMzNlZjk0MWJjMDIiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIn19.74U6V1-SuzVGgdmH-p74QrMrt2qQ5aI7UKeASvsZARGjiDAGOitGgNGHL4tLW1-w4kym_ALh_hKdf6-ER-I3Sg",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userUuid\": \"7ebafedb-7a47-4890-a047-133ef941bc02\",\n\t\"subscriptionTopics\": [\n\t\t{\n\t\t\t\"uuid\": \"ac73b421-72e5-4f9f-8db0-5df2ec84928d\",\n\t\t\t\"active\": false\n\t\t},\n\t\t{\n\t\t\t\"uuid\": \"d78432bc-02cc-40e2-b15a-132c52b89755\",\n\t\t\t\"active\": true\n\t\t},\n\t\t{\n\t\t\t\"uuid\": \"98aaf306-16f9-4bb7-ab38-27f7348bde59\",\n\t\t\t\"active\": false\n\t\t}\n\t]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/subscriptions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"subscriptions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view user subscriptions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1Nzg3NTQzNjksImp0aSI6IjVmOTBiNDc4MmIxZmQ1MmFjZjgxZTJlYTI1NTQ2ODA1IiwiaXNzIjoiYXBpIiwiZXhwIjoxNTc4ODQwNzY5LCJkYXRhIjp7InV1aWQiOiI3ZWJhZmVkYi03YTQ3LTQ4OTAtYTA0Ny0xMzNlZjk0MWJjMDIiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIn19.74U6V1-SuzVGgdmH-p74QrMrt2qQ5aI7UKeASvsZARGjiDAGOitGgNGHL4tLW1-w4kym_ALh_hKdf6-ER-I3Sg",
+						"type": "text"
+					},
+					{
+						"key": "useruuid",
+						"value": "7ebafedb-7a47-4890-a047-133ef941bc02",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/subscriptions/7ebafedb-7a47-4890-a047-133ef941bc02",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"subscriptions",
+						"7ebafedb-7a47-4890-a047-133ef941bc02"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user logout",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1Nzg3NTQzNjksImp0aSI6IjVmOTBiNDc4MmIxZmQ1MmFjZjgxZTJlYTI1NTQ2ODA1IiwiaXNzIjoiYXBpIiwiZXhwIjoxNTc4ODQwNzY5LCJkYXRhIjp7InV1aWQiOiI3ZWJhZmVkYi03YTQ3LTQ4OTAtYTA0Ny0xMzNlZjk0MWJjMDIiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIn19.74U6V1-SuzVGgdmH-p74QrMrt2qQ5aI7UKeASvsZARGjiDAGOitGgNGHL4tLW1-w4kym_ALh_hKdf6-ER-I3Sg",
+						"type": "text"
+					},
+					{
+						"key": "userUuid",
+						"value": "7ebafedb-7a47-4890-a047-133ef941bc02",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/users/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
