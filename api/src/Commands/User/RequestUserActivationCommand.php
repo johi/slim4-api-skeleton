@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Commands\User;
 
+use App\Application\Configuration\AppConfiguration;
 use App\Commands\Command;
 use App\Domain\Exception\DomainRecordNotFoundException;
 use App\Domain\Exception\DomainRecordUpdateException;
@@ -37,9 +38,11 @@ class RequestUserActivationCommand extends Command
         }
         //@todo if already activated do not create a new one!, add test
         $userActivation = $this->userRepository->createUserActivation($user);
+        $configuration = AppConfiguration::getAll();
         $this->emailService->send(
             new SimpleEmailMessage('confirm.html', [
                 'name' => $user->getName(),
+                'url' => AppConfiguration::getBaseUrl() . $configuration['paths']['activation'],
                 'token' => $userActivation->getToken()
             ],
                 'Please confirm your email',

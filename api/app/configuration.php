@@ -4,6 +4,11 @@ use Monolog\Logger;
 
 function getConfiguration() {
     return [
+        'http' => [
+            'protocol' => $_ENV['PROTOCOL'],
+            'host' => $_ENV['HOST'],
+            'port' => $_ENV['PORT']
+        ],
         'displayErrorDetails' => true, // Should be set to false in production
         'logger' => [
             'name' => 'slim-api',
@@ -44,6 +49,10 @@ function getConfiguration() {
             'server_name' => $_ENV['SERVER_NAME'],
             'password_request_token_expiration' => (int)$_ENV['PASSWORD_TOKEN_EXPIRATION'],
             'activation_token_expiration' => (int)$_ENV['ACTIVATION_TOKEN_EXPIRATION']
+        ],
+        'paths' => [
+            'activation' => $_ENV['ACTIVATION_PATH'], //path to visit given account confirmation token
+            'password' => $_ENV['PASSWORD_PATH'] //path to visit given password token
         ]
     ];
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Commands\User;
 
+use App\Application\Configuration\AppConfiguration;
 use App\Commands\Command;
 use App\Domain\Exception\DomainRecordNotFoundException;
 use App\Domain\Exception\DomainRecordUpdateException;
@@ -34,9 +35,11 @@ class RequestPasswordResetCommand extends Command
             throw new DomainRecordUpdateException(sprintf('The user of uuid: %s has not been activated yet for RequestPasswordResetCommand', $user->getUuid()));
         }
         $passwordReset = $this->userRepository->createPasswordReset($user);
+        $configuration = AppConfiguration::getAll();
         $this->emailService->send(
             new SimpleEmailMessage('forgotPassword.html', [
                 'name' => $user->getName(),
+                'url' => AppConfiguration::getBaseUrl() . $configuration['paths']['password'],
                 'token' => $passwordReset->getToken()
             ],
                 'Your password reset link',

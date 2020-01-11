@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Commands\User;
 
+use App\Application\Configuration\AppConfiguration;
 use App\Commands\Command;
 use App\Domain\Exception\DomainRecordDuplicateException;
 use App\Domain\User\User;
@@ -33,9 +34,11 @@ class RegisterUserCommand extends Command
         $user = $this->userRepository->createUser($data['name'], $data['email'], $data['password']);
         $userActivation = $this->userRepository->createUserActivation($user);
         //@todo need to know when the email bounces, marking email as sent, need to rethink domain model?
+        $configuration = AppConfiguration::getAll();
         $this->emailService->send(
             new SimpleEmailMessage('confirm.html', [
                 'name' => $user->getName(),
+                'url' => AppConfiguration::getBaseUrl() . $configuration['paths']['activation'],
                 'token' => $userActivation->getToken()
             ],
                 'Please confirm your email',
