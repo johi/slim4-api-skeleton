@@ -21,6 +21,7 @@
         "php": ">=7.1",
         "ext-json": "*",
         "firebase/php-jwt": "^5.0",
+        "justinrainbow/json-schema": "^5.2",
         "monolog/monolog": "^1.24",
         "php-di/php-di": "^6.0",
         "robmorgan/phinx": "^0.11.1",
