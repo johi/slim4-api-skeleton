@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Register User",
+  "description": "Validation schema for the register user endpoint",
+  "type": "object",
+  "required": [
+    "name",
+    "email",
+    "password",
+    "password_confirmation"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-zA-Z\\s]+$",
+      "minLength": 3,
+      "maxLength": 128
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "password": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9\\s!#%&*+,\\-./:;<=>?@^_`|~]+$",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "password_confirmation": {
+      "type": "string"
+    }
+  }
+}
