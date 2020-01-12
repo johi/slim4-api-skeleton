@@ -30,13 +30,19 @@ class ActionError implements JsonSerializable
     private $description;
 
     /**
+     * @var array
+     */
+    private $data;
+
+    /**
      * @param string        $type
      * @param string|null   $description
      */
-    public function __construct(string $type, ?string $description)
+    public function __construct(string $type, ?string $description, array $data = [])
     {
         $this->type = $type;
         $this->description = $description;
+        $this->data = $data;
     }
 
     /**
@@ -60,7 +66,7 @@ class ActionError implements JsonSerializable
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -78,12 +84,31 @@ class ActionError implements JsonSerializable
     /**
      * @return array
      */
+    public function getData(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param array $data
+     * @return $this
+     */
+    public function setData(array $data): self
+    {
+        $this->data = $data;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
         $payload = [
             'error' => true,
             'type' => $this->type,
             'description' => $this->description,
+            'data' => $this->data
         ];
 
         return $payload;

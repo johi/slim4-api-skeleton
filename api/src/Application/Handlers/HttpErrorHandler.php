@@ -5,11 +5,12 @@ namespace App\Application\Handlers;
 
 use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
+use App\Application\Actions\Exception\HttpBadRequestException;
 use App\Application\Actions\Exception\HttpConflictException;
 use App\Application\Actions\Exception\HttpNotAcceptableException;
 use Exception;
 use Psr\Http\Message\ResponseInterface as Response;
-use Slim\Exception\HttpBadRequestException;
+//use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpException;
 use Slim\Exception\HttpForbiddenException;
 use Slim\Exception\HttpMethodNotAllowedException;
@@ -65,6 +66,10 @@ class HttpErrorHandler extends SlimErrorHandler
             && $this->displayErrorDetails
         ) {
             $error->setDescription($exception->getMessage());
+        }
+
+        if ($exception instanceof HttpBadRequestException) {
+            $error->setData($exception->getData());
         }
 
         $payload = new ActionPayload($statusCode, null, $error);

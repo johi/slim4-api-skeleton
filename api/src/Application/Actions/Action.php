@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Application\Actions;
 
+use App\Application\Actions\Exception\HttpBadRequestException;
 use App\Application\Actions\Exception\HttpConflictException;
 use App\Application\Actions\Exception\HttpNotAcceptableException;
 use App\Domain\Exception\DomainException;
@@ -17,7 +18,7 @@ use App\Domain\Exception\DomainServiceException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
-use Slim\Exception\HttpBadRequestException;
+//use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpForbiddenException;
 use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Exception\HttpMethodNotAllowedException;

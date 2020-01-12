@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\User;
 
+use App\Application\Actions\Exception\HttpBadRequestException;
+use App\Application\Validation\AppValidator;
 use App\Commands\User\RegisterUserCommand;
 use Psr\Http\Message\ResponseInterface as Response;
 
@@ -14,10 +16,13 @@ class RegisterUserAction extends UserActionWithEmail
     protected function action(): Response
     {
         $data = $this->getPayload();
-        //@todo validate input: should check for name (min, max),
-        // email (is valid email [DNS?]),
-        // password (regex, min, max)
+        $this->logger->debug(__dir__);
+        $errors = AppValidator::validate($data, 'users/register.json');
         //password and password_confirmation identical
+        if (!empty($errors)) {
+            throw new HttpBadRequestException($this->request, 'Validation Errors', $errors);
+        }
+
         $user = call_user_func(
             new RegisterUserCommand($this->logger, $this->userRepository, $this->emailService),
             $data
